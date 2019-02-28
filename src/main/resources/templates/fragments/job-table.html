@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <body>
-<table class="job-table table table-sm mb-0" th:fragment="job-table (genes)">
+<table class="job-table table table-sm mb-0" th:fragment="job-table (joblist)">
     <thead class="thead-light">
     <tr>
         <th scope="col">Job ID</th>
@@ -13,7 +13,7 @@
     </tr>
     </thead>
     <tbody>
-    <th:block th:each="job : ${jobs}">
+    <th:block th:each="job : ${joblist}">
         <tr>
             <td><span class="align-middle"><a
                     th:href="'job/' + ${job.jobId}"

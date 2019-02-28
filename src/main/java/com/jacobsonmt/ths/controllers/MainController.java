@@ -1,8 +1,8 @@
 package com.jacobsonmt.ths.controllers;
 
 import com.jacobsonmt.ths.model.ContactForm;
+import com.jacobsonmt.ths.services.CCRSService;
 import com.jacobsonmt.ths.services.EmailService;
-import com.jacobsonmt.ths.services.JobManager;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailSendException;
@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ import javax.validation.Valid;
 public class MainController {
 
     @Autowired
-    private JobManager jobManager;
+    private CCRSService ccrsService;
 
     @Autowired
     private EmailService emailService;
@@ -35,8 +36,8 @@ public class MainController {
 
     @GetMapping("/queue")
     public String queue( Model model) {
-
-        model.addAttribute("jobs", jobManager.listPublicJobs() );
+        String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
 
         return "queue";
     }

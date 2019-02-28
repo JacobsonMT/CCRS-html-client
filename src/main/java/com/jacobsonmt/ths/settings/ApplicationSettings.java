@@ -11,21 +11,11 @@ import org.springframework.stereotype.Component;
 @Setter
 public class ApplicationSettings {
 
-    private String command;
-    private String jobsDirectory;
-    private String outputScoredPDBFilename;
-    private String outputCSVFilename;
-    private String inputPDBFilename;
-    private String inputFASTAFilename;
-    private String jobSerializationFilename;
-    private boolean loadJobsFromDisk;
+    private String processServerURI;
 
-    private int concurrentJobs = 1;
     private int userProcessLimit = 2;
     private int userJobLimit = 200;
-    private boolean purgeSavedJobs = true;
-    private int purgeSavedJobsTimeHours = 1;
-    private int purgeAfterHours = 24;
+
     private boolean emailOnJobSubmitted = true;
     private boolean emailOnJobStart = true;
 

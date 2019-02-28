@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>IDR Bind - Job Description</title>
+    <title>TaCoS - Job Description</title>
     <object th:include="fragments/head :: head" th:remove="tag" />
 </head>
 <body>
@@ -55,8 +55,6 @@
                 Inputs
             </div>
             <div class="card-body">
-                <span class="d-block align-middle mb-2" th:text="'Chain ID(s): ' + ${job.inputProteinChainIds}"></span>
-                <a class="align-middle m-4" th:href="${job.jobId}+'/inputPDB'">input.pdb</a>
                 <a class="align-middle m-4" th:href="${job.jobId}+'/inputFASTA'">input.fasta</a>
             </div>
         </div>
@@ -66,8 +64,7 @@
                 Results
             </div>
             <div class="card-body" th:if="${job.complete && !job.failed}">
-                <a class="align-middle m-4" th:href="${job.jobId}+'/resultPDB'" th:text="${@applicationSettings.getOutputScoredPDBFilename()}">result.pdb</a>
-                <a class="align-middle m-4" th:href="${job.jobId}+'/resultCSV'" th:text="${@applicationSettings.getOutputCSVFilename()}">result.csv</a>
+                <a class="align-middle m-4" th:href="${job.jobId}+'/resultCSV'">result.csv</a>
             </div>
 
             <div class="card-body" th:if="${!job.complete}">

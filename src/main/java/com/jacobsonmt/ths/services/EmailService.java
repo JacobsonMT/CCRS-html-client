@@ -1,6 +1,5 @@
 package com.jacobsonmt.ths.services;
 
-import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.settings.SiteSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -55,43 +54,7 @@ public class EmailService {
         boolean hasAttachment = (attachment != null && !Objects.equals( attachment.getOriginalFilename(), "" ));
         content.append( "<p>File Attached: " + hasAttachment + "</p>" );
 
-        sendMessage( "IDR Bind Help - Contact Support", content.toString(), siteSettings.getContactEmail(), hasAttachment ? attachment : null );
-    }
-
-    public void sendJobSubmittedMessage( THSJob job ) throws MessagingException {
-        if ( job.getEmail() == null || job.getEmail().isEmpty() ) {
-            return;
-        }
-        sendMessage( "IDB Bind - Job Submitted", jobToEmail("Job Submitted", job), job.getEmail() );
-    }
-
-    public void sendJobStartMessage( THSJob job ) throws MessagingException {
-        if ( job.getEmail() == null || job.getEmail().isEmpty() ) {
-            return;
-        }
-        sendMessage( "IDB Bind - Job Started", jobToEmail("Job Started", job), job.getEmail() );
-
-    }
-
-    public void sendJobCompletionMessage( THSJob job ) throws MessagingException {
-        if ( job.getEmail() == null || job.getEmail().isEmpty() ) {
-            return;
-        }
-        sendMessage( "IDB Bind - Job Complete", jobToEmail("Job Complete", job), job.getEmail() );
-    }
-
-    private String jobToEmail(String header, THSJob job) {
-        StringBuilder content = new StringBuilder();
-        content.append( "<p>" + header + "</p>" );
-        content.append( "<p>Label: " + job.getLabel() + "</p>" );
-        content.append( "<p>Submitted: " + job.getSubmittedDate() + "</p>" );
-        content.append( "<p>Status: " + job.getStatus() + "</p>" );
-        if ( job.isSaved() ) {
-            content.append( "<p>Saved Link: " + "<a href='" + siteSettings.getFullUrl()
-                    + "job/" + job.getJobId() + "' target='_blank'>"
-                    + siteSettings.getFullUrl() + "job/" + job.getJobId() + "'</a></p>" );
-        }
-        return content.toString();
+        sendMessage( "TaCoS Help - Contact Support", content.toString(), siteSettings.getContactEmail(), hasAttachment ? attachment : null );
     }
 
 }

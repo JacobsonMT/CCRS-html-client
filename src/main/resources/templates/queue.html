@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>IDR Bind - Job Queue</title>
+    <title>TaCoS - Job Queue</title>
     <object th:include="fragments/head :: head" th:remove="tag" />
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
@@ -14,11 +14,11 @@
 <div class="container p-4">
 
 
-    <div th:replace="fragments/title :: title(title='Public Jobs Queue')" th:remove="tag">...</div>
+    <div th:replace="fragments/title :: title(title='Jobs Queue')" th:remove="tag">...</div>
 
     <div class="main-content p-4" >
 
-        <div th:replace="fragments/job-table :: job-table(genes=${@jobManager.listPublicJobs()})"
+        <div th:replace="fragments/job-table :: job-table(joblist=${jobs})"
              th:remove="tag">...
         </div>
 
