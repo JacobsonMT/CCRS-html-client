@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 public class ApplicationSettings {
 
     private String processServerURI;
+    private String clientId;
+    private String clientToken;
 
     private int userProcessLimit = 2;
     private int userJobLimit = 200;

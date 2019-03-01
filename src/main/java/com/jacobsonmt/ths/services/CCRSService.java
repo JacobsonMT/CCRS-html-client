@@ -1,8 +1,10 @@
 package com.jacobsonmt.ths.services;
 
 import com.jacobsonmt.ths.model.THSJob;
+import com.jacobsonmt.ths.settings.ApplicationSettings;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -17,10 +19,8 @@ import java.util.List;
 @Service
 public class CCRSService {
 
-    private static final String CCRS_API_URI = "http://localhost:8080/api";
-    private static final String CLIENT_ID = "client1"; //TODO: Move to properties
-    private static final String CLIENT_TOKEN = "client1token"; //TODO: Move to properties
-
+    @Autowired
+    private ApplicationSettings applicationSettings;
 
     public ResponseEntity<JobSubmissionResponse> submitJob( String userId, String label, String fasta, String email, boolean hidden) {
         RestTemplate restTemplate = new RestTemplate();
@@ -28,7 +28,7 @@ public class CCRSService {
         HttpEntity<JobSubmission> request =
                 new HttpEntity<>( jobSubmission, createHeaders() );
         log.info( jobSubmission );
-        return restTemplate.postForEntity( CCRS_API_URI + "/job/submit", request, JobSubmissionResponse.class );
+        return restTemplate.postForEntity( applicationSettings.getProcessServerURI() + "/job/submit", request, JobSubmissionResponse.class );
     }
 
     public THSJob getJob(String jobId) {
@@ -37,9 +37,9 @@ public class CCRSService {
         // getForObject cannot specify headers so we use exchange
 
         // TODO: this might be vulnerable to attack, either validate jobId or do some sort of escaping
-        log.info( "Client: (" + CLIENT_ID + "), Job: (" + jobId + ")" );
+        log.info( "Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
         ResponseEntity<THSJob> response
-                = restTemplate.exchange(CCRS_API_URI + "/job/" + jobId, HttpMethod.GET, entity, THSJob.class);
+                = restTemplate.exchange(applicationSettings.getProcessServerURI() + "/job/" + jobId, HttpMethod.GET, entity, THSJob.class);
 
         return response.getBody();
 
@@ -51,9 +51,9 @@ public class CCRSService {
         // getForObject cannot specify headers so we use exchange
 
         // TODO: this might be vulnerable to attack, either validate jobId or do some sort of escaping
-        log.info( "Client: (" + CLIENT_ID + "), User: (" + userId + ")" );
+        log.info( "Client: (" + applicationSettings.getClientId() + "), User: (" + userId + ")" );
         ResponseEntity<List<THSJob>> response
-                = restTemplate.exchange(CCRS_API_URI + "/queue/client/" + CLIENT_ID + "/user/" + userId,
+                = restTemplate.exchange(applicationSettings.getProcessServerURI() + "/queue/client/" + applicationSettings.getClientId() + "/user/" + userId,
                 HttpMethod.GET, entity, new ParameterizedTypeReference<List<THSJob>>(){});
 
         return response.getBody();
@@ -62,8 +62,8 @@ public class CCRSService {
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set( "client", CLIENT_ID );
-        headers.set( "auth_token", CLIENT_TOKEN );
+        headers.set( "client", applicationSettings.getClientId() );
+        headers.set( "auth_token", applicationSettings.getClientToken() );
         return headers;
     }
 
