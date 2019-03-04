@@ -29,7 +29,7 @@ public class JobController {
 
     @PostMapping("/")
     public String submitJob(       @RequestParam("fastaFile") MultipartFile fastaFile,
-                                   @RequestParam("label") String label,
+                                   @RequestParam(value = "label", required = false, defaultValue = "") String label,
                                    @RequestParam(value = "email", required = false, defaultValue = "") String email,
                                    @RequestParam(value = "hidden", required = false, defaultValue = "false") boolean hidden,
 //                                   HttpServletRequest request,
@@ -42,9 +42,15 @@ public class JobController {
 
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
 
+        String fasta = InputStreamUtils.inputStreamToString( fastaFile.getInputStream() );
+
+        if ( label.isEmpty() ) {
+            label = fasta.split( "\\r?\\n" )[0];
+        }
+
         ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( userId,
                 label,
-                InputStreamUtils.inputStreamToString( fastaFile.getInputStream() ),
+                fasta,
                 email,
                 hidden );
 
