@@ -1,5 +1,6 @@
 package com.jacobsonmt.ths.services;
 
+import com.jacobsonmt.ths.model.Base;
 import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.settings.ApplicationSettings;
 import lombok.*;
@@ -13,7 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -41,6 +45,20 @@ public class CCRSService {
         ResponseEntity<THSJob> response
                 = restTemplate.exchange(applicationSettings.getProcessServerURI() + "/job/" + jobId, HttpMethod.GET, entity, THSJob.class);
 
+        // Add parsed version of result csv to aid in creation of front-end visualisations
+        THSJob job = response.getBody();
+
+        if (job != null && job.getResult() != null) {
+            List<Base> sequence = Arrays.stream( job.getResult().getResultCSV().split( "\\r?\\n" ) )
+                    .skip( 1 )
+                    .map( mapBase )
+                    .collect( Collectors.toList() );
+            job.getResult().setSequence( sequence );
+
+            // Remove string version of results to cut down ont data transfer
+            job.getResult().setResultCSV( "" );
+        }
+
         return response.getBody();
 
     }
@@ -66,6 +84,17 @@ public class CCRSService {
         headers.set( "auth_token", applicationSettings.getClientToken() );
         return headers;
     }
+
+    private static Function<String, Base> mapBase = ( rawLine ) -> {
+        List<String> line = Arrays.asList( rawLine.split( "\t" ) );
+
+        Base base = new Base( line.get( 2 ), Integer.valueOf( line.get( 3 ) ), Double.valueOf( line.get( 4 ) ) );
+
+        if ( line.size() > 5 ) {
+            base.setList( line.stream().skip( 5 ).map( Double::parseDouble ).collect( Collectors.toList() ) );
+        }
+        return base;
+    };
 
 
     @ToString

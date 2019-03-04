@@ -71,7 +71,7 @@ public class JobController {
             return "/";
         }
 
-        model.addAttribute("job", job.obfuscate() );
+        model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
 
         return "job";
     }

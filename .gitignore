@@ -26,3 +26,6 @@
 
 /application.properties
 /test_commands/jobs/*/
+
+src/main/resources/static/built/
+node_modules/
