@@ -117,6 +117,6 @@ public class CCRSService {
     @NoArgsConstructor
     public static class JobSubmissionResponse {
         private String message;
-        private String jobId;
+        private List<String> jobIds;
     }
 }

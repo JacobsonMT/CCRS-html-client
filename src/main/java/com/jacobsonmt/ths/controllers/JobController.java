@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.List;
 
 @Log4j2
 @Controller
@@ -44,9 +45,9 @@ public class JobController {
 
         String fasta = InputStreamUtils.inputStreamToString( fastaFile.getInputStream() );
 
-        if ( label.isEmpty() ) {
-            label = fasta.split( "\\r?\\n" )[0];
-        }
+//        if ( label.isEmpty() ) {
+//            label = fasta.split( "\\r?\\n" )[0];
+//        }
 
         ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( userId,
                 label,
@@ -55,13 +56,28 @@ public class JobController {
                 true );
 
         if ( jobSubmissionResponse.getStatusCodeValue() == 202 && jobSubmissionResponse.getBody() != null) {
-            redirectAttributes.addFlashAttribute( "message",
-                    "Job Submitted! View job <a href='job/" + jobSubmissionResponse.getBody().getJobId() + "' target='_blank'>here</a>." );
-            redirectAttributes.addFlashAttribute( "warning", false );
+            List<String> jobids = jobSubmissionResponse.getBody().getJobIds();
+            StringBuilder message;
+            if ( jobids.size() > 1 ) {
+                message = new StringBuilder( "Multiple Jobs Submitted! View them in the <a href='queue/' target='_blank'>queue</a> or here: " );
+//                        jobids.stream().map( s -> "<a href='job/" + s + "' target='_blank'>here</a>" )
+//                                .collect( Collectors.joining(", "));
+
+                int idx = 1;
+                for ( String jobid : jobids ) {
+                    message.append( "<a href='job/" ).append( jobid ).append( "' target='_blank'>" ).append( idx ).append( "</a> " );
+                    idx++;
+                }
+            } else {
+                message = new StringBuilder( "Job Submitted! View job <a href='job/" + jobids.get( 0 ) + "' target='_blank'>here</a>." );
+            }
+            redirectAttributes.addFlashAttribute( "submitMessage", message.toString() );
+            if (!jobSubmissionResponse.getBody().getMessage().isEmpty()) {
+                redirectAttributes.addFlashAttribute( "warnMessage", jobSubmissionResponse.getBody().getMessage() );
+            }
         } else {
-            redirectAttributes.addFlashAttribute( "message",
+            redirectAttributes.addFlashAttribute( "errorMessage",
                     jobSubmissionResponse.getBody() != null ? jobSubmissionResponse.getBody().getMessage() : "Server Error" );
-            redirectAttributes.addFlashAttribute( "warning", true );
         }
 
         return "redirect:/";
