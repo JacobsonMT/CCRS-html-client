@@ -4,6 +4,19 @@
 <head>
     <title>TaCoS</title>
     <object th:include="fragments/head :: head" th:remove="tag" />
+    <script th:inline="javascript">
+
+        $(document).ready(function () {
+            $("#fastaExampleBtn").click(function(e) {
+                $("#fasta").val(
+                    ">Example\r\n" +
+                    "MQSGTHWRVLGLCLLSVGVWGQDGNEEMGGITQTPYKVSISGTTVILTCPQYPGSEILWQHNDKNIGGDEDDKNIGSDEDHLSLKEFSELEQSGYYVCYPRGSKPEDANFYLYLRARVCENCMEMDVMSVATIVIVDICITGGLLLLVYYWSKNRKAKAKPVTRGAGAGGRQRGQNKERPPPVPNPDYEPIRKGQRDLYSGLNQRRI"
+                )
+            });
+
+        });
+
+    </script>
 </head>
 <body>
 <div th:replace="fragments/navbar">...</div>
@@ -21,10 +34,15 @@
 
         <div class="p-4" style="max-width: 600px;">
             <form method="POST" enctype="multipart/form-data" action="/">
+                <!--<div class="form-group">-->
+                    <!--<label for="fastaFile">FASTA file</label>-->
+                    <!--<input type="file" class="form-control-file" id="fastaFile" name="fastaFile" aria-describedby="fastaFileHelp" required>-->
+                    <!--<small id="fastaFileHelp" class="form-text text-muted">Sequence file in the FASTA format labeled with matching chain ID.</small>-->
+                <!--</div>-->
                 <div class="form-group">
-                    <label for="fastaFile">FASTA file</label>
-                    <input type="file" class="form-control-file" id="fastaFile" name="fastaFile" aria-describedby="fastaFileHelp" required>
-                    <small id="fastaFileHelp" class="form-text text-muted">Sequence file in the FASTA format labeled with matching chain ID.</small>
+                    <label for="fasta">FASTA</label>
+                    <textarea rows="5" class="form-control" id="fasta" name="fasta" aria-describedby="fastaHelp" required></textarea>
+                    <small id="fastaHelp" class="form-text text-muted">Sequences with identifier headers in FASTA format. <a id="fastaExampleBtn" href="#">See example</a>.</small>
                 </div>
                 <div class="form-group">
                     <label for="label">(Optional) Job Name</label>

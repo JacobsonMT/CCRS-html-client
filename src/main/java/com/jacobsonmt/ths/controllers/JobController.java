@@ -30,7 +30,8 @@ public class JobController {
     private CCRSService ccrsService;
 
     @PostMapping("/")
-    public String submitJob(       @RequestParam("fastaFile") MultipartFile fastaFile,
+    public String submitJob(       @RequestParam(value = "fasta", required = false, defaultValue = "") String fasta,
+                                   @RequestParam(value = "fastaFile", required = false) MultipartFile fastaFile,
                                    @RequestParam(value = "label", required = false, defaultValue = "") String label,
                                    @RequestParam(value = "email", required = false, defaultValue = "") String email,
 //                                   HttpServletRequest request,
@@ -43,7 +44,14 @@ public class JobController {
 
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
 
-        String fasta = InputStreamUtils.inputStreamToString( fastaFile.getInputStream() );
+        if ( fasta.isEmpty() ) {
+            if (fastaFile != null) {
+                fasta = InputStreamUtils.inputStreamToString( fastaFile.getInputStream() );
+            } else {
+                redirectAttributes.addFlashAttribute( "errorMessage", "FASTA not found" );
+                return "redirect:/";
+            }
+        }
 
 //        if ( label.isEmpty() ) {
 //            label = fasta.split( "\\r?\\n" )[0];
@@ -56,20 +64,20 @@ public class JobController {
                 true );
 
         if ( jobSubmissionResponse.getStatusCodeValue() == 202 && jobSubmissionResponse.getBody() != null) {
-            List<String> jobids = jobSubmissionResponse.getBody().getJobIds();
+            List<String> jobIds = jobSubmissionResponse.getBody().getJobIds();
             StringBuilder message;
-            if ( jobids.size() > 1 ) {
+            if ( jobIds.size() > 1 ) {
                 message = new StringBuilder( "Multiple Jobs Submitted! View them in the <a href='queue/' target='_blank'>queue</a> or here: " );
-//                        jobids.stream().map( s -> "<a href='job/" + s + "' target='_blank'>here</a>" )
+//                        jobIds.stream().map( s -> "<a href='job/" + s + "' target='_blank'>here</a>" )
 //                                .collect( Collectors.joining(", "));
 
                 int idx = 1;
-                for ( String jobid : jobids ) {
+                for ( String jobid : jobIds ) {
                     message.append( "<a href='job/" ).append( jobid ).append( "' target='_blank'>" ).append( idx ).append( "</a> " );
                     idx++;
                 }
             } else {
-                message = new StringBuilder( "Job Submitted! View job <a href='job/" + jobids.get( 0 ) + "' target='_blank'>here</a>." );
+                message = new StringBuilder( "Job Submitted! View job <a href='job/" + jobIds.get( 0 ) + "' target='_blank'>here</a>." );
             }
             redirectAttributes.addFlashAttribute( "submitMessage", message.toString() );
             if (!jobSubmissionResponse.getBody().getMessage().isEmpty()) {
