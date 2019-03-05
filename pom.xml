@@ -8,8 +8,8 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>TaCos HTML Server</name>
-    <description>TaCos HTML Server</description>
+    <name>List 2.0</name>
+    <description>CCRS HTML Server</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
