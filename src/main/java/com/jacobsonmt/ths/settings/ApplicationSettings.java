@@ -18,6 +18,7 @@ public class ApplicationSettings {
     private int userProcessLimit = 2;
     private int userJobLimit = 200;
 
+    private boolean disableEmails = false;
     private boolean emailOnJobSubmitted = true;
     private boolean emailOnJobStart = true;
 
