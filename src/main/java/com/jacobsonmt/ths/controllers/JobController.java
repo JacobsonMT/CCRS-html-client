@@ -1,5 +1,6 @@
 package com.jacobsonmt.ths.controllers;
 
+import com.jacobsonmt.ths.exceptions.JobNotFoundException;
 import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.services.CCRSService;
 import com.jacobsonmt.ths.utils.InputStreamUtils;
@@ -73,7 +74,7 @@ public class JobController {
         THSJob job = ccrsService.getJob( jobId );
 
         if (job==null) {
-            return "/";
+            throw new JobNotFoundException();
         }
 
         model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
@@ -88,7 +89,7 @@ public class JobController {
         THSJob job = ccrsService.getJob( jobId );
 
         if (job==null) {
-            return "/";
+            throw new JobNotFoundException();
         }
 
         model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
