@@ -4,6 +4,20 @@
 <head>
     <title>TaCoS - Job Description</title>
     <object th:include="fragments/head :: head" th:remove="tag" />
+    <script src="https://code.highcharts.com/6.0.3/highcharts.js"></script>
+    <script src="https://code.highcharts.com/6.0.3/modules/heatmap.js"></script>
+    <script src="https://code.highcharts.com/6.0.3/modules/boost.js"></script>
+    <script src="https://code.highcharts.com/6.0.3/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/6.0.3/modules/offline-exporting.js"></script>
+    <script th:inline="javascript">
+
+        /*<![CDATA[*/
+
+        const job = /*[[${job}]]*/ 'job';
+
+        /*]]>*/
+    </script>
+    <script th:src="@{/js/job.js}"></script>
 </head>
 <body>
 <div th:replace="fragments/navbar">...</div>
@@ -68,6 +82,18 @@
 
                 <div id="job-graphs">
 
+                    <div id="heatmap-container">
+
+                    </div>
+
+                    <div id="conservation-container">
+
+                    </div>
+
+                    <div id="depth-container">
+
+                    </div>
+
                 </div>
             </div>
 
@@ -84,15 +110,5 @@
 
 </div>
 <div th:replace="fragments/footer" th:remove="tag">...</div>
-
-<script th:inline="javascript">
-
-    /*<![CDATA[*/
-
-    const job = /*[[${job}]]*/ 'job';
-
-    /*]]>*/
-</script>
-<script th:src="@{/built/job.js}"></script>
 </body>
 </html>

@@ -82,6 +82,21 @@ public class JobController {
         return "job";
     }
 
+    @GetMapping("/job2/{jobId}")
+    public String job2( @PathVariable("jobId") String jobId,
+                       Model model) throws IOException {
+
+        THSJob job = ccrsService.getJob( jobId );
+
+        if (job==null) {
+            return "/";
+        }
+
+        model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
+
+        return "job";
+    }
+
     @GetMapping("/job/{jobId}/resultCSV")
     public ResponseEntity<String> jobResultCSV( @PathVariable("jobId") String jobId) {
         THSJob job = ccrsService.getJob( jobId );
