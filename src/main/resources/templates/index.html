@@ -47,6 +47,7 @@
                 <div class="form-group">
                     <label for="label">(Optional) Job Name</label>
                     <input type="text" class="form-control" id="label" name="label" placeholder="2LPB">
+                    <small id="labelHelp" class="form-text text-muted">Label used for your reference in the job queue.</small>
                 </div>
                 <div class="form-group" th:if="${!@applicationSettings.isDisableEmails()}">
                     <label for="email">(Optional) Email Address</label>
