@@ -53,9 +53,13 @@ public class JobController {
             }
         }
 
-//        if ( label.isEmpty() ) {
-//            label = fasta.split( "\\r?\\n" )[0];
-//        }
+        if ( label.isEmpty() ) {
+            String[] fastaLines = fasta.split( "\\r?\\n" );
+            if (fastaLines.length == 2) {
+                label = fastaLines[0];
+            }
+
+        }
 
         ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( userId,
                 label,
