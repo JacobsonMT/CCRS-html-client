@@ -9,6 +9,12 @@ body {
     margin-bottom: 60px;
 }
 
+nav.navbar {
+    -webkit-box-shadow: 0 4px 0px 0px #999;
+    -moz-box-shadow: 0 4px 0px 0px #999;
+    box-shadow: 0 4px 0px 0px #999;
+}
+
 div.brand > p {
     color: lightgrey;
     margin-bottom: 2px;
@@ -28,7 +34,10 @@ div.brand > h1 {
     width: 100%;
     height: 60px;
     line-height: 60px;
-    background-color: #f5f5f5;
+    background-color: #d8d6d6;
+    -webkit-box-shadow: 0 -4px 0px 0px #999;
+    -moz-box-shadow: 0 -4px 0px 0px #999;
+    box-shadow: 0 -4px 0px 0px #999;
 }
 
 .validation-message {
