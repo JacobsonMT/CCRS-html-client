@@ -31,7 +31,6 @@ public class JobController {
     public String submitJob(       @RequestParam("fastaFile") MultipartFile fastaFile,
                                    @RequestParam(value = "label", required = false, defaultValue = "") String label,
                                    @RequestParam(value = "email", required = false, defaultValue = "") String email,
-                                   @RequestParam(value = "hidden", required = false, defaultValue = "false") boolean hidden,
 //                                   HttpServletRequest request,
                                    RedirectAttributes redirectAttributes) throws IOException {
 
@@ -52,7 +51,7 @@ public class JobController {
                 label,
                 fasta,
                 email,
-                hidden );
+                true );
 
         if ( jobSubmissionResponse.getStatusCodeValue() == 202 && jobSubmissionResponse.getBody() != null) {
             redirectAttributes.addFlashAttribute( "message",
