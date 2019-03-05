@@ -51,7 +51,7 @@
                     <tr>
                         <td class="text-right" style="width: 33%">Submitted:</td>
                         <td>
-                            <span class="align-middle p-4" th:if="${job.complete && !job.failed}" th:text="${job.submittedDate != null} ? ${job.submittedDate} : 'Submission Pending'"></span>
+                            <span class="align-middle p-4" th:if="${!job.failed}" th:text="${job.submittedDate != null} ? ${job.submittedDate} : 'Submission Pending'"></span>
                             <span class="align-middle p-4" th:if="${job.failed}">Failed</span>
                         </td>
                     </tr>
