@@ -49,3 +49,7 @@ div.brand > h1 {
 .result-card {
     /*max-width:600px;*/
 }
+
+div.container {
+    overflow-x: hidden;
+}

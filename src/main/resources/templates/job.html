@@ -45,19 +45,22 @@
                 <table class="job-table table table-sm mb-0">
                     <tbody>
                     <tr>
-                        <td>Email</td>
+                        <td class="text-right" style="width: 33%">Email:</td>
                         <td><span class="align-middle p-4" th:text="${job.email != null && job.email != ''} ? ${job.email} : 'None'"></span></td>
                     </tr>
                     <tr>
-                        <td>Submitted</td>
-                        <td><span class="align-middle p-4" th:text="${job.submittedDate != null} ? ${job.submittedDate} : 'Submission Pending'"></span></td>
+                        <td class="text-right" style="width: 33%">Submitted:</td>
+                        <td>
+                            <span class="align-middle p-4" th:if="${job.complete && !job.failed}" th:text="${job.submittedDate != null} ? ${job.submittedDate} : 'Submission Pending'"></span>
+                            <span class="align-middle p-4" th:if="${job.failed}">Failed</span>
+                        </td>
                     </tr>
                     <tr>
-                        <td>Started</td>
+                        <td class="text-right" style="width: 33%">Started:</td>
                         <td><span class="align-middle p-4" th:text="${job.startedDate != null} ? ${job.startedDate} : 'Not Started'"></span></td>
                     </tr>
                     <tr>
-                        <td>Finished</td>
+                        <td class="text-right" style="width: 33%">Finished:</td>
                         <td><span class="align-middle p-4" th:text="${job.finishedDate != null} ? ${job.finishedDate} : 'Not Finished'"></span></td>
                     </tr>
                     </tbody>
