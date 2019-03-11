@@ -15,10 +15,10 @@
     <tbody>
     <th:block th:each="job : ${joblist}">
         <tr>
-            <td><span class="align-middle" th:text="${job.label}"></span></td>
-            <td><span class="align-middle" th:text="${job.status}"></span></td>
-            <td><span class="align-middle" th:text="${job.email}"></span></td>
-            <td><span class="align-middle" th:text="${job.submittedDate}"></span></td>
+            <td><span class="align-middle" th:text="${job.label}" th:classappend="${job.failed ? 'text-danger' : ''}"></span></td>
+            <td><span class="align-middle" th:text="${job.status}" th:classappend="${job.failed ? 'text-danger' : ''}"></span></td>
+            <td><span class="align-middle" th:text="${job.email}" th:classappend="${job.failed ? 'text-danger' : ''}"></span></td>
+            <td><span class="align-middle" th:text="${job.submittedDate}" th:classappend="${job.failed ? 'text-danger' : ''}"></span></td>
             <td>
                 <span class="align-middle">
 

@@ -55,13 +55,13 @@
                 </div>
                 <div>
                     <button type="submit" class="btn btn-primary">Submit</button>
-                    <div th:if="${submitMessage}" class="ml-4 alert d-inline-block" th:classappend="alert-success" role="alert">
+                    <div th:if="${submitMessage}" class="ml-4 mb-0 alert d-inline-block" th:classappend="alert-success" role="alert">
                         <span th:utext="${submitMessage}" th:remove="tag"/>
                     </div>
-                    <div th:if="${warnMessage}" class="ml-4 alert d-inline-block" th:classappend="alert-warning" role="alert">
+                    <div th:if="${warnMessage}" class="ml-4 mb-0 alert d-inline-block" th:classappend="alert-warning" role="alert">
                         <span th:utext="${warnMessage}" th:remove="tag"/>
                     </div>
-                    <div th:if="${errorMessage}" class="ml-4 alert d-inline-block" th:classappend="alert-danger" role="alert">
+                    <div th:if="${errorMessage}" class="ml-4 mb-0 alert d-inline-block" th:classappend="alert-danger" role="alert">
                         <span th:utext="${errorMessage}" th:remove="tag"/>
                     </div>
                 </div>
