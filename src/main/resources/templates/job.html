@@ -29,61 +29,12 @@
         <span class="d-block text-center mb-4 text-muted" th:text="${job.jobId}">...</span>
         <!--<small class="d-block text-center mb-4 text-muted" th:if="${job.hidden}" th:text="Private">...</small>-->
 
-        <div class="card mx-auto text-center mb-4 result-card">
-            <div class="card-header">
-                Status
-            </div>
-            <div class="card-body">
-                <span th:text="${job.status}" th:remove="tag"></span>
-            </div>
-        </div>
-
-        <div class="card mx-auto text-center mb-4 result-card">
-            <div class="card-header">
-                Details
-            </div>
-                <table class="job-table table table-sm mb-0">
-                    <tbody>
-                    <tr>
-                        <td class="text-right" style="width: 33%">Email:</td>
-                        <td><span class="align-middle p-4" th:text="${job.email != null && job.email != ''} ? ${job.email} : 'None'"></span></td>
-                    </tr>
-                    <tr>
-                        <td class="text-right" style="width: 33%">Submitted:</td>
-                        <td>
-                            <span class="align-middle p-4" th:if="${!job.failed}" th:text="${job.submittedDate != null} ? ${job.submittedDate} : 'Submission Pending'"></span>
-                            <span class="align-middle p-4" th:if="${job.failed}">Failed</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-right" style="width: 33%">Started:</td>
-                        <td><span class="align-middle p-4" th:text="${job.startedDate != null} ? ${job.startedDate} : 'Not Started'"></span></td>
-                    </tr>
-                    <tr>
-                        <td class="text-right" style="width: 33%">Finished:</td>
-                        <td><span class="align-middle p-4" th:text="${job.finishedDate != null} ? ${job.finishedDate} : 'Not Finished'"></span></td>
-                    </tr>
-                    </tbody>
-                </table>
-        </div>
-
-        <div class="card mx-auto text-center mb-4 result-card">
-            <div class="card-header">
-                Inputs
-            </div>
-            <div class="card-body">
-                <a class="align-middle m-4" th:href="${job.jobId}+'/inputFASTA'">input.fasta</a>
-            </div>
-        </div>
-
-        <div class="card mx-auto text-center mb-4 result-card">
+        <div class="card mx-auto text-center mb-4 result-card" th:if="${job.complete}">
             <div class="card-header">
                 Results
             </div>
             <div class="card-body" th:if="${job.complete && !job.failed}">
-                <a class="align-middle m-4" th:href="${job.jobId}+'/resultCSV'">result.csv</a>
-
-                <div id="job-graphs">
+               <div id="job-graphs">
 
                     <div id="heatmap-container">
 
@@ -106,6 +57,50 @@
 
             <div class="card-body text-danger" th:if="${job.failed}">
                 <p class="card-text">Job Failed</p>
+            </div>
+        </div>
+
+        <div class="card mx-auto text-center mb-4 result-card">
+            <div class="card-header">
+                Status
+            </div>
+            <div class="card-body">
+                <span th:text="${job.status}" th:remove="tag"></span>
+            </div>
+        </div>
+
+        <div class="card mx-auto text-center mb-4 result-card">
+            <div class="card-header">
+                Details
+            </div>
+                <table class="job-table table table-sm mb-0">
+                    <tbody>
+                    <tr>
+                        <td class="text-right" style="width: 33%">Submitted:</td>
+                        <td>
+                            <span class="align-middle p-4" th:if="${!job.failed}" th:text="${job.submittedDate != null} ? ${job.submittedDate} : 'Submission Pending'"></span>
+                            <span class="align-middle p-4" th:if="${job.failed}">Failed</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="width: 33%">Started:</td>
+                        <td><span class="align-middle p-4" th:text="${job.startedDate != null} ? ${job.startedDate} : 'Not Started'"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-right" style="width: 33%">Finished:</td>
+                        <td><span class="align-middle p-4" th:text="${job.finishedDate != null} ? ${job.finishedDate} : 'Not Finished'"></span></td>
+                    </tr>
+                    </tbody>
+                </table>
+        </div>
+
+        <div class="card mx-auto text-center mb-4 result-card">
+            <div class="card-header">
+                Downloads
+            </div>
+            <div class="card-body">
+                <a th:href="${job.jobId} +'/inputFASTA'" class="align-middle mr-2"><i class="fas fa-file-download mr-1"></i>Input FASTA</a>
+                <a th:href="${job.jobId} +'/resultCSV'" th:if="${job.complete && !job.failed}" class="align-middle"><i class="fas fa-file-download mr-1"></i>Results</a>
             </div>
         </div>
 

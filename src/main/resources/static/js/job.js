@@ -93,7 +93,7 @@ $(document).ready(function () {
     if (data.length !== 0) {
         window.heatmapChart = new Highcharts.Chart(
             document.getElementById('heatmap-container'),
-            createHeatMap( "", data, categories)
+            createHeatMap( "Position Conservation Matrix", data, categories)
         );
         charts.push( window.heatmapChart );
     }
@@ -109,7 +109,7 @@ $(document).ready(function () {
     if (depthData.every(function(v) {return v.data.length !== 0})) {
         window.depthChart = new Highcharts.Chart(
             document.getElementById('depth-container'),
-            createChart( "Depth", depthData, true, true, "linear")
+            createChart( "Alignment Depth", depthData, true, true, "linear")
         );
         charts.push( window.depthChart );
     }
@@ -191,7 +191,13 @@ function createHeatMap(title,
 
 
         title: {
-            text: ""
+            text: title,
+            align: 'left',
+            margin: 0,
+            x: 70,
+            style: {
+                fontSize: '1.8em',
+            },
         },
 
         plotOptions: {
@@ -370,7 +376,6 @@ function createHeatMap(title,
                     marginTop: 60,
                 },
                 title: {
-                    text: job.label,
                     style: {
                         fontSize: '3em'
                     }
