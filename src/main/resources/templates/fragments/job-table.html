@@ -5,23 +5,28 @@
 <table class="job-table table table-sm mb-0" th:fragment="job-table (joblist)">
     <thead class="thead-light">
     <tr>
-        <th scope="col">Job ID</th>
-        <th scope="col">Label</th>
+        <th scope="col">Header</th>
         <th scope="col">Status</th>
         <th scope="col">Email</th>
         <th scope="col">Submitted</th>
+        <th scope="col">Results</th>
     </tr>
     </thead>
     <tbody>
     <th:block th:each="job : ${joblist}">
         <tr>
-            <td><span class="align-middle"><a
-                    th:href="'job/' + ${job.jobId}"
-                    target="_blank" class="align-middle" th:text="${job.jobId}"></a></span></td>
             <td><span class="align-middle" th:text="${job.label}"></span></td>
             <td><span class="align-middle" th:text="${job.status}"></span></td>
             <td><span class="align-middle" th:text="${job.email}"></span></td>
             <td><span class="align-middle" th:text="${job.submittedDate}"></span></td>
+            <td>
+                <span th:if="${job.complete}" class="align-middle">
+
+                    <a th:href="'job/' + ${job.jobId}" target="_blank" class="align-middle mr-2"><i class="fas fa-chart-area mr-1"></i>View</a>
+
+                    <a th:href="'job/' + ${job.jobId} +'/resultCSV'" class="align-middle"><i class="fas fa-file-download mr-1"></i>Download</a>
+                </span>
+            </td>
         </tr>
     </th:block>
     </tbody>
