@@ -125,7 +125,7 @@ public class JobController {
         if ( job != null && job.isComplete() && !job.isFailed() ) {
             return ResponseEntity.ok()
                     .contentType( MediaType.parseMediaType("application/octet-stream"))
-                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + "-result.csv\"")
+                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + ".list\"")
                     .body(job.getResult().getResultCSV());
         }
         return ResponseEntity.badRequest().body( "" );
@@ -139,7 +139,7 @@ public class JobController {
         if ( job != null ) {
             return ResponseEntity.ok()
                     .contentType( MediaType.parseMediaType("application/octet-stream"))
-                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + "-input.fasta\"")
+                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + ".fasta\"")
                     .body(job.getInputFASTAContent());
         }
         return ResponseEntity.badRequest().body( "" );
