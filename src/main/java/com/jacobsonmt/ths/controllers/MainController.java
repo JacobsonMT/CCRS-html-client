@@ -30,7 +30,8 @@ public class MainController {
 
     @GetMapping("/")
     public String index( Model model) {
-
+        String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
         return "index";
     }
 
