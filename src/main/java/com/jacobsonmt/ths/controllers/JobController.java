@@ -48,7 +48,7 @@ public class JobController {
             if (fastaFile != null) {
                 fasta = InputStreamUtils.inputStreamToString( fastaFile.getInputStream() );
             } else {
-                redirectAttributes.addFlashAttribute( "errorMessage", "FASTA not found" );
+                redirectAttributes.addFlashAttribute( "errorMessage", "FASTA Not Found" );
                 return "redirect:/";
             }
         }
@@ -63,17 +63,9 @@ public class JobController {
             List<String> jobIds = jobSubmissionResponse.getBody().getJobIds();
             StringBuilder message;
             if ( jobIds.size() > 1 ) {
-                message = new StringBuilder( "Multiple Jobs Submitted! View them in the <a href='queue/' target='_blank'>queue</a> or here: " );
-//                        jobIds.stream().map( s -> "<a href='job/" + s + "' target='_blank'>here</a>" )
-//                                .collect( Collectors.joining(", "));
-
-                int idx = 1;
-                for ( String jobid : jobIds ) {
-                    message.append( "<a href='job/" ).append( jobid ).append( "' target='_blank'>" ).append( idx ).append( "</a> " );
-                    idx++;
-                }
+                message = new StringBuilder( "Multiple Jobs Submitted" );
             } else {
-                message = new StringBuilder( "Job Submitted! View job <a href='job/" + jobIds.get( 0 ) + "' target='_blank'>here</a>." );
+                message = new StringBuilder( "Job Submitted" );
             }
             redirectAttributes.addFlashAttribute( "submitMessage", message.toString() );
             if (!jobSubmissionResponse.getBody().getMessage().isEmpty()) {

@@ -6,14 +6,18 @@ import com.jacobsonmt.ths.settings.ApplicationSettings;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -27,7 +31,7 @@ public class CCRSService {
     private ApplicationSettings applicationSettings;
 
     public ResponseEntity<JobSubmissionResponse> submitJob( String userId, String label, String fasta, String email, boolean hidden) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new NoOpResponseErrorHandler()).build();
         JobSubmission jobSubmission = new JobSubmission( userId, label, fasta, email, hidden );
         HttpEntity<JobSubmission> request =
                 new HttpEntity<>( jobSubmission, createHeaders() );
@@ -118,5 +122,14 @@ public class CCRSService {
     public static class JobSubmissionResponse {
         private String message;
         private List<String> jobIds;
+    }
+
+    private static class NoOpResponseErrorHandler extends
+            DefaultResponseErrorHandler {
+
+        @Override
+        public void handleError( ClientHttpResponse response) throws IOException {
+        }
+
     }
 }
