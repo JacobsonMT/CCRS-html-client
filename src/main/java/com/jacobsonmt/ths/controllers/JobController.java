@@ -32,7 +32,7 @@ public class JobController {
     @PostMapping("/")
     public String submitJob(       @RequestParam(value = "fasta", required = false, defaultValue = "") String fasta,
                                    @RequestParam(value = "fastaFile", required = false) MultipartFile fastaFile,
-                                   @RequestParam(value = "label", required = false, defaultValue = "") String label,
+//                                   @RequestParam(value = "label", required = false, defaultValue = "") String label,
                                    @RequestParam(value = "email", required = false, defaultValue = "") String email,
 //                                   HttpServletRequest request,
                                    RedirectAttributes redirectAttributes) throws IOException {
@@ -53,16 +53,8 @@ public class JobController {
             }
         }
 
-        if ( label.isEmpty() ) {
-            String[] fastaLines = fasta.split( "\\r?\\n" );
-            if (fastaLines.length == 2) {
-                label = fastaLines[0];
-            }
-
-        }
-
         ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( userId,
-                label,
+                "",
                 fasta,
                 email,
                 true );
