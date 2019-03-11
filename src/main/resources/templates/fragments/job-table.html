@@ -20,11 +20,11 @@
             <td><span class="align-middle" th:text="${job.email}"></span></td>
             <td><span class="align-middle" th:text="${job.submittedDate}"></span></td>
             <td>
-                <span th:if="${job.complete}" class="align-middle">
+                <span class="align-middle">
 
                     <a th:href="'job/' + ${job.jobId}" target="_blank" class="align-middle mr-2"><i class="fas fa-chart-area mr-1"></i>View</a>
 
-                    <a th:href="'job/' + ${job.jobId} +'/resultCSV'" class="align-middle"><i class="fas fa-file-download mr-1"></i>Download</a>
+                    <a th:if="${job.complete && !job.failed}" th:href="'job/' + ${job.jobId} +'/resultCSV'" class="align-middle"><i class="fas fa-file-download mr-1"></i>Download</a>
                 </span>
             </td>
         </tr>
