@@ -33,9 +33,11 @@ public class THSJob  {
     private long executionTime;
 
     public THSJob obfuscate() {
+        // We recreate CCRSJobResult without resultCSV to cut down on data transfer
         return new THSJob( jobId, clientId, label, status, running, failed, complete, position,
                 email.replaceAll("(\\w{0,3})(\\w+.*)(@.*)", "$1****$3"),
-                hidden, submittedDate, startedDate, finishedDate, inputFASTAContent, result, executionTime );
+                hidden, submittedDate, startedDate, finishedDate, inputFASTAContent,
+                result == null ? null : new CCRSJobResult( "", result.getSequence() ), executionTime );
     }
 
 }

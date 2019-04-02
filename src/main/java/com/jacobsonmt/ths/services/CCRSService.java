@@ -67,8 +67,6 @@ public class CCRSService {
                     .collect( Collectors.toList() );
             job.getResult().setSequence( sequence );
 
-            // Remove string version of results to cut down ont data transfer
-            job.getResult().setResultCSV( "" );
         }
 
         return response.getBody();
