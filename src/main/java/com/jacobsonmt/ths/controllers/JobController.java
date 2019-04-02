@@ -109,6 +109,18 @@ public class JobController {
         return "job";
     }
 
+    @GetMapping("/job/{jobId}/delete")
+    public ResponseEntity<String> deleteJob( @PathVariable("jobId") String jobId ) {
+
+        String result = ccrsService.deleteJob( jobId );
+
+        if (result==null) {
+            throw new JobNotFoundException();
+        }
+
+        return ResponseEntity.ok( "Job Deleted" );
+    }
+
     @GetMapping("/job/{jobId}/resultCSV")
     public ResponseEntity<String> jobResultCSV( @PathVariable("jobId") String jobId) {
         THSJob job = ccrsService.getJob( jobId );

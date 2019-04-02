@@ -43,7 +43,6 @@ public class CCRSService {
                 applicationSettings.isEmailOnJobComplete());
         HttpEntity<JobSubmission> request =
                 new HttpEntity<>( jobSubmission, createHeaders() );
-        log.info( jobSubmission );
         return restTemplate.postForEntity( applicationSettings.getProcessServerURI() + "/job/submit", request, JobSubmissionResponse.class );
     }
 
@@ -68,6 +67,20 @@ public class CCRSService {
             job.getResult().setSequence( sequence );
 
         }
+
+        return response.getBody();
+
+    }
+
+    public String deleteJob(String jobId) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity entity = new HttpEntity(createHeaders());
+        // getForObject cannot specify headers so we use exchange
+
+        // TODO: this might be vulnerable to attack, either validate jobId or do some sort of escaping
+        log.info( "Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
+        ResponseEntity<String> response
+                = restTemplate.exchange(applicationSettings.getProcessServerURI() + "/job/" + jobId + "/delete", HttpMethod.GET, entity, String.class);
 
         return response.getBody();
 
