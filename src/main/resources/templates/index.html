@@ -4,6 +4,7 @@
 <head>
     <title>List 2.0</title>
     <object th:include="fragments/head :: head" th:remove="tag" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}"/>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
     <script th:src="@{/js/queue.js}"></script>
@@ -41,7 +42,10 @@
                 <!--</div>-->
                 <div class="form-group">
                     <label for="fasta">Enter protein sequences in FASTA format</label>
-                    <textarea rows="5" class="form-control" id="fasta" name="fasta" aria-describedby="fastaHelp" required></textarea>
+                    <div class="search-wrapper">
+                        <textarea rows="5" class="form-control search-box" style="resize:both;" id="fasta" name="fasta" aria-describedby="fastaHelp" required></textarea>
+                        <button class="close-icon" type="reset"></button>
+                    </div>
                     <small id="fastaHelp" class="form-text text-muted">Sequences with identifier headers in FASTA format. <a id="fastaExampleBtn" href="#">See example</a>.</small>
                 </div>
                 <div class="form-group" th:if="${!@applicationSettings.isDisableEmails()}">
