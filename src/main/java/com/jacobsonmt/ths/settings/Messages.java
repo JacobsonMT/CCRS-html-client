@@ -11,17 +11,6 @@ import org.springframework.stereotype.Component;
 @Setter
 public class Messages {
 
-    @Getter
-    @Setter
-    public static class EmailMessages {
-        private String submit;
-        private String complete;
-        private String fail;
-    }
-
-    private EmailMessages email;
-
-
     private String title;
 
 }
