@@ -3,6 +3,7 @@ package com.jacobsonmt.ths.services;
 import com.jacobsonmt.ths.model.Base;
 import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.settings.ApplicationSettings;
+import com.jacobsonmt.ths.settings.SiteSettings;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,16 @@ public class CCRSService {
     @Autowired
     private ApplicationSettings applicationSettings;
 
+    @Autowired
+    private SiteSettings siteSettings;
+
     public ResponseEntity<JobSubmissionResponse> submitJob( String userId, String label, String fasta, String email, boolean hidden) {
         RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new NoOpResponseErrorHandler()).build();
-        JobSubmission jobSubmission = new JobSubmission( userId, label, fasta, email, hidden );
+        JobSubmission jobSubmission = new JobSubmission( userId, label, fasta, email, hidden,
+                siteSettings.getFullUrl() + "job/",
+                applicationSettings.isEmailOnJobSubmitted(),
+                applicationSettings.isEmailOnJobStart(),
+                applicationSettings.isEmailOnJobComplete());
         HttpEntity<JobSubmission> request =
                 new HttpEntity<>( jobSubmission, createHeaders() );
         log.info( jobSubmission );
@@ -112,6 +120,10 @@ public class CCRSService {
         private String fastaContent;
         private String email;
         private boolean hidden;
+        private String emailJobLinkPrefix;
+        private Boolean emailOnJobSubmitted;
+        private Boolean emailOnJobStart;
+        private Boolean emailOnJobComplete;
     }
 
     @ToString

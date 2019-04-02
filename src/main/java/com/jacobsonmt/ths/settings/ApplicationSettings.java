@@ -21,5 +21,6 @@ public class ApplicationSettings {
     private boolean disableEmails = false;
     private boolean emailOnJobSubmitted = true;
     private boolean emailOnJobStart = true;
+    private boolean emailOnJobComplete = true;
 
 }
