@@ -3,7 +3,7 @@
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>List 2.0 - Documentation</title>
-    <object th:include="fragments/head :: head" th:remove="tag" />
+    <object th:include="fragments/head :: head" th:remove="tag"/>
 </head>
 <body>
 <div th:replace="fragments/navbar">...</div>
@@ -12,47 +12,56 @@
 
     <div th:replace="fragments/title :: title(title='About')" th:remove="tag">...</div>
 
-    <div class="main-content p-4" >
-        <p><b>IDRBind</b> is a protein interface predictor built specifically for binding sites of molecular recognition
-            features (MoRFs), which are interaction mediating elements in intrinsically disordered regions (IDRs).</p>
+    <div class="main-content p-4">
+        <p><b>LIST 2.0</b> predicts the deleteriousness of amino acid mutations in human protein sequences. First, it
+            aligns (pair-wise alignment) the query sequence to all protein sequences in the UniProt Swiss-Prot/TrEMBL
+            database and then it identifies the most relevant homologies based on their local identity to the query
+            sequence around the position of the target mutation. And finally, it estimates the potential deleteriousness
+            of mutations based on Taxonomy distance of species with variations to the query.</p>
 
-        <p>Protein-protein interactions have a fundamental role in most biological processes and many computational
-            methods have been created for the prediction of these interaction interfaces based on protein structure.
-            Most of these methods have been trained and tested on classical globular-globular protein interactions.
-            However, a large fraction of interactions is mediated by MoRFs, which play an especially prominent role
-            in signaling and regulation. IDRBind is a method built to predict MoRF-binding sites on structures of
-            folded proteins. It makes use of information from residue composition, residue evolutionary conservation,
-            residue relative accessible surface area (rASA), surface geometry, estimated B-factor and electrostatics.</p>
+        <p> Prediction scores are in the range [0 .. 1], where lower scores indicate more benign and higher indicate
+            deleteriousness effect. We also included precomputed predictions of virtually all protein sequences
+            identified by their UniProt accession and Ensemble transcriptome id.</p>
 
     </div>
 
     <div th:replace="fragments/title :: title(title='Instructions')" th:remove="tag">...</div>
 
-    <div class="main-content p-4" >
-        <p><b>PDB file</b> - Upload the protein(s) coordinates in standard PDB file format. It is recommended to have properly terminated
-            chains. When multiple models of the protein are available, only the first model in the file is used.<p>
-        <p><b>PDB Chain ID(s)</b> - You must specify one or more protein chains matching those found in the PDB file (e.g. AB).</p>
-        <p><b>FASTA file</b> - We also require a sequence file in the FASTA format labeled with matching chain ID.</p>
-        <div class="card bg-light mb-3" style="max-width: 18rem;">
-            <div class="card-header">FASTA example</div>
-            <div class="card-body">
-                <p class="card-text mb-0">&gt;A</p>
-                <p class="card-text mb-0">SEQUENCE</p>
-                <p class="card-text mb-0">&gt;B</p>
-                <p class="card-text mb-0">SEQUENCE</p>
-            </div>
-        </div>
-        <p><b>Job Name</b> - Optional label for your job to identify it in the <a th:href="@{/queue}" href="/queue">public jobs queue</a> and its individual job page.</p>
-        <p><b>Email Address</b> - Optional email address your you to be notified at when your job has entered the
-            process queue, begun processing, and finished processing.</p>
-        <p><b>Keep this job private</b> - Optionally prevent this job from showing up in the <a th:href="@{/queue}" href="/queue">public jobs queue</a>.<p>
-        <p class="font-weight-bold">NOTE: If job is set to private, remember to save the URL of the job's page or to
-            supply an email so as to not to accidentally lose access to your job!</p>
+    <div class="main-content p-4">
+        <p><b>Input:</b></p>
+        <p>One or more protein sequences in fasta format.</p>
+        <p><b>Output:</b></p>
+        <ol type="I">
+            <li> The potential deleteriousness effect of every possible amino acid mutation in the form of a heat-map
+                matrix.
+            </li>
+            <li> A downloadable text file with the following columns:
+                <ol type="1">
+                    <li>AC: Sequence id from the fasta header.</li>
+                    <li>Pos: Amino acid position.</li>
+                    <li>Ref: The reference amino acid.</li>
+                    <li>Conservation: The average LIST deleteriousness score of all possible mutations at that
+                        position.
+                    </li>
+                    <li>20 columns one for each amino acid: The potential deleteriousness LIST score for mutating the
+                        reference amino acid to “this” amino acid.
+                    </li>
+                </ol>
+        </ol>
+
+
+
     </div>
 
+    <div th:replace="fragments/title :: title(title='Terms & Conditions')" th:remove="tag">...</div>
 
+    <div class="main-content p-4" >
+        <p><small>This software is distributed on an as is basis, without any kind of warranties. This software is free for academic not for profit research only. Appropriate citation when using LIST in publication of scientific results. These UBC Terms of Use set out the terms and conditions that will govern your relationship with UBC, through your use of LIST, including without limitation, your access to the LIST Website, underlying LIST software (the “UBC Software”) through a web browser, web service or other electronic means, uploading data to the LIST 2.0 Website, downloading data from the LIST 2.0 Website, searching, using analytical tools or visualizations and other software related services that may be provided by UBC through the LIST Website (the “UBC Services”). You are hereby notified that the UBC Software has been developed and is licensed under the Apache License, Version 2.0 (the “License”); and you may not use the UBC Software except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0. UBC disclaims all representation and/or warranties, and bears no responsibility and/or liability for either third party software or the UBC Services. For greater certainty, the “UBC Services” does not include the actual license of the underlying UBC Software to you, which would if requested by you and agreed to by UBC, would be set up through a private installation and governed by a separate license agreement between UBC and you.</small></p>
+    </div>
 
 </div>
-<div th:replace="fragments/footer" th:remove="tag">...</div>
+
+
+    <div th:replace="fragments/footer" th:remove="tag">...</div>
 </body>
 </html>
