@@ -8,7 +8,6 @@
         <th scope="col"></th>
         <th scope="col">Header</th>
         <th scope="col">Status</th>
-        <th scope="col" th:if="${!@applicationSettings.isDisableEmails()}">Email</th>
         <th scope="col">Submitted</th>
         <th scope="col">Results</th>
     </tr>
@@ -23,7 +22,6 @@
             </td>
             <td><span class="align-middle" th:text="${job.label}" th:classappend="${job.failed ? 'text-danger' : ''}"></span></td>
             <td><span class="align-middle" th:text="${job.status}" th:classappend="${job.failed ? 'text-danger' : ''}"></span></td>
-            <td th:if="${!@applicationSettings.isDisableEmails()}"><span class="align-middle" th:text="${job.email}" th:classappend="${job.failed ? 'text-danger' : ''}" ></span></td>
             <td><span class="align-middle" th:text="${job.submittedDate}" th:classappend="${job.failed ? 'text-danger' : ''}"></span></td>
             <td>
                 <span class="align-middle">

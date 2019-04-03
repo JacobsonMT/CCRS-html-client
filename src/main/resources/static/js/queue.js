@@ -10,7 +10,7 @@ $(document).ready(function () {
             data.order = "";
         },
         "columnDefs": [
-            { "orderable": false, "targets": [0, 5] }
+            { "orderable": false, "targets": [0, -1] }
         ]
     });
 
