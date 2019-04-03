@@ -95,13 +95,6 @@ $(document).ready(function () {
 
     connect();
 
-    $('#job-graphs').bind('mouseleave', function(e) {
-        window.charts.forEach(function (chart) {
-            chart.tooltip.hide();
-            chart.xAxis[0].removePlotLine('plot-line-sync');
-        });
-    });
-
     if (job.complete && !job.failed) {
         initializeGraphs();
     }
@@ -109,6 +102,14 @@ $(document).ready(function () {
 });
 
 function initializeGraphs() {
+
+    $('#job-graphs').bind('mouseleave', function(e) {
+        window.charts.forEach(function (chart) {
+            chart.tooltip.hide();
+            chart.xAxis[0].removePlotLine('plot-line-sync');
+        });
+    });
+
     let data = [];
     let categories = [];
     let depth = [];
