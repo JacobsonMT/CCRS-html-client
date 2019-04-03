@@ -72,8 +72,10 @@
 
         <hr/>
 
-        <div th:replace="fragments/job-table :: job-table(joblist=${jobs})"
-             th:remove="tag">...
+        <div id="job-table">
+            <div th:replace="fragments/job-table :: job-table(joblist=${jobs})"
+                 th:remove="tag">...
+            </div>
         </div>
 
         <hr/>

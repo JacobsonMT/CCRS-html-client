@@ -17,6 +17,48 @@
 //     }
 // }
 
+function connect() {
+
+    if (job.complete) {
+        return;
+    }
+
+    window.source = new EventSource('/register');
+    // Handle correct opening of connection
+    source.addEventListener('open', function (e) {
+        console.log('Connected.');
+    });
+
+    // Update the state when ever a message is sent
+    source.addEventListener('message', function (e) {
+        updateJobViewContent();
+    }, false);
+    // Reconnect if the connection fails
+    source.addEventListener('error', function (e) {
+        console.log('Disconnected.');
+        if (e.readyState == EventSource.CLOSED) {
+            connected = false;
+            connect();
+        }
+    }, false);
+}
+
+function updateJobViewContent() {
+    $.get(window.location.pathname + "/content", function(fragment) { // get from controller
+        $("#job-view-content").replaceWith(fragment); // update snippet of page
+        $.get(window.location.pathname + "/sequence", function(sequence) { // get from controller
+            job.result = {sequence: sequence};
+            initializeGraphs();
+            if ( sequence.length > 0 ) {
+                console.log('Disconnected.');
+                source.close();
+            }
+        });
+
+    });
+
+}
+
 /**
  * Custom Axis extension to allow emulation of negative values on a logarithmic
  * Y axis. Note that the scale is not mathematically correct, as a true
@@ -51,6 +93,8 @@
 
 $(document).ready(function () {
 
+    connect();
+
     $('#job-graphs').bind('mouseleave', function(e) {
         window.charts.forEach(function (chart) {
             chart.tooltip.hide();
@@ -58,6 +102,13 @@ $(document).ready(function () {
         });
     });
 
+    if (job.complete && !job.failed) {
+        initializeGraphs();
+    }
+
+});
+
+function initializeGraphs() {
     let data = [];
     let categories = [];
     let depth = [];
@@ -121,8 +172,7 @@ $(document).ready(function () {
     // );
     // charts.push( window.predictionChart );
     // }
-
-});
+}
 
 function createHeatMap(title,
                        data,

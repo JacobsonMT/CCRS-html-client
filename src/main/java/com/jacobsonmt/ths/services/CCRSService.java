@@ -34,6 +34,8 @@ public class CCRSService {
     @Autowired
     private SiteSettings siteSettings;
 
+    private Integer completionCount = 0;
+
     public ResponseEntity<JobSubmissionResponse> submitJob( String userId, String label, String fasta, String email, boolean hidden) {
         RestTemplate restTemplate = new RestTemplateBuilder().errorHandler(new NoOpResponseErrorHandler()).build();
         JobSubmission jobSubmission = new JobSubmission( userId, label, fasta, email, hidden,
@@ -84,6 +86,29 @@ public class CCRSService {
 
         return response.getBody();
 
+    }
+
+    public synchronized boolean hasChanged() {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity entity = new HttpEntity( createHeaders() );
+        // getForObject cannot specify headers so we use exchange
+
+        try {
+            ResponseEntity<Integer> response
+                    = restTemplate.exchange( applicationSettings.getProcessServerURI() + "/queue/client/" + applicationSettings.getClientId() + "/complete",
+                    HttpMethod.GET, entity, Integer.class );
+
+            Integer newCompletionCount = response.getBody();
+
+            if ( newCompletionCount != null && newCompletionCount > completionCount ) {
+                completionCount = newCompletionCount;
+                return true;
+            }
+        } catch ( Exception e ){
+            log.warn( "Issue polling CCRS" );
+        }
+
+        return false;
     }
 
     public List<THSJob> getJobsForUser(String userId) {

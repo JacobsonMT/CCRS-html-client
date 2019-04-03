@@ -35,6 +35,14 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/job-table")
+    public String getJobTable( Model model) {
+        String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
+
+        return "index :: #job-table";
+    }
+
     @GetMapping("/queue")
     public String queue( Model model) {
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
