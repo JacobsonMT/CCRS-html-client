@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +42,9 @@ public class SseController {
             synchronized ( sseEmitter ) {
                 sseEmitter.forEach( ( SseEmitter emitter ) -> {
                     try {
-                        emitter.send( "Update", MediaType.APPLICATION_JSON );
+                        if ( emitter != null) {
+                            emitter.send( "Update", MediaType.APPLICATION_JSON );
+                        }
                     } catch ( IOException e ) {
                         emitter.complete();
                     }
@@ -56,7 +59,7 @@ public class SseController {
      * @throws IOException if registering the new emitter fails
      */
     @RequestMapping( path = "/register", method = RequestMethod.GET )
-    public SseEmitter register() throws IOException {
+    public SseEmitter register( HttpServletResponse response) throws IOException {
 
         SseEmitter emitter = new SseEmitter(60000L );
 
@@ -66,6 +69,7 @@ public class SseController {
         emitter.onTimeout( () -> {
             synchronized ( sseEmitter ) {
                 sseEmitter.remove( emitter );
+                emitter.complete();
             }
         } );
         emitter.onCompletion( () -> {
@@ -73,6 +77,8 @@ public class SseController {
                 sseEmitter.remove( emitter );
             }
         } );
+
+        response.addHeader("X-Accel-Buffering", "no");
 
         return emitter;
     }
