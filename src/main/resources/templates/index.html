@@ -33,7 +33,7 @@
 
         <div th:replace="fragments/title :: title(title='Submit Job(s)')" th:remove="tag">...</div>
 
-        <div class="p-4" style="max-width: 600px;">
+        <div class="p-4" style="max-width: 1100px;">
             <form method="POST" enctype="multipart/form-data" action="/">
                 <!--<div class="form-group">-->
                     <!--<label for="fastaFile">FASTA file</label>-->
@@ -43,7 +43,7 @@
                 <div class="form-group">
                     <label for="fasta">Enter protein sequences in FASTA format</label>
                     <div class="search-wrapper">
-                        <textarea rows="5" class="form-control search-box" style="resize:both;" id="fasta" name="fasta" aria-describedby="fastaHelp" required></textarea>
+                        <textarea rows="6" class="form-control search-box" style="resize:both;" id="fasta" name="fasta" aria-describedby="fastaHelp" required></textarea>
                         <button class="close-icon" type="reset"></button>
                     </div>
                     <small id="fastaHelp" class="form-text text-muted">Sequences with identifier headers in FASTA format. <a id="fastaExampleBtn" href="#">See example</a>.</small>
