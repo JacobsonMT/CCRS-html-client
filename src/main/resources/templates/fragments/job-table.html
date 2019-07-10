@@ -17,7 +17,7 @@
         <tr>
             <td class="text-center">
                 <span class="align-middle">
-                    <a th:onclick="'deleteJob(event, \'' + ${job.jobId} + '\')'" title="delete" class="align-middle mr-2" style="cursor: pointer;"><i class="fas fa-trash"></i></a>
+                    <a th:jobId="${job.jobId}" onclick="deleteJob(event, this.getAttribute('jobId'))" title="delete" class="align-middle mr-2" style="cursor: pointer;"><i class="fas fa-trash"></i></a>
                 </span>
             </td>
             <td><span class="align-middle" th:text="${job.label}" th:classappend="${job.failed ? 'text-danger' : ''}"></span></td>
