@@ -63,7 +63,7 @@ public class CCRSService {
 
         if (job != null && job.getResult() != null) {
             List<Base> sequence = Arrays.stream( job.getResult().getResultCSV().split( "\\r?\\n" ) )
-                    .skip( 1 )
+                    .skip( 2 ) // Skip OX taxa id and header
                     .map( mapBase )
                     .collect( Collectors.toList() );
             job.getResult().setSequence( sequence );

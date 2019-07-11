@@ -75,6 +75,12 @@
             </div>
                 <table class="job-table table table-sm mb-0">
                     <tbody>
+                    <tr th:if="${job.complete && !job.failed}">
+                        <td class="text-right" style="width: 33%">OX Taxa id:</td>
+                        <td>
+                            <span class="align-middle p-4" th:text="${job.result != null ? job.result.taxaId : ''}"></span>
+                        </td>
+                    </tr>
                     <tr>
                         <td class="text-right" style="width: 33%">Submitted:</td>
                         <td>

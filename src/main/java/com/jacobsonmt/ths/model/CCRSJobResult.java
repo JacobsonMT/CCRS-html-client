@@ -14,6 +14,7 @@ import java.util.List;
 public final class CCRSJobResult {
 
     private String resultCSV; //TODO: Kind of clunky storing two representations of the same thing
+    private int taxaId;
     private List<Base> sequence;
 
 }
