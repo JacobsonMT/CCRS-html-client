@@ -6,7 +6,7 @@
     <groupId>com.jacobsonmt.ths</groupId>
     <artifactId>ths</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <name>List 2.0</name>
     <description>CCRS HTML Server</description>
