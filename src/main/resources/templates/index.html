@@ -19,7 +19,7 @@
                     "MAWTPLLLLFPLLLHCTGSLSQPVLTQSSSASASLGSSVKLTCTLSSGHSSYIIAWHQQQPGKAPRYLMKLEGSGSYNKGSGVPDRFSGSSSGADRYLTISNLQFEDEADYYCETWDSNT"
                 )
             });
-
+            $('.toast').toast('show');
         });
 
     </script>
@@ -28,6 +28,38 @@
 <body>
 <div th:replace="fragments/navbar">...</div>
 <div class="container p-4">
+
+    <div style="position: absolute; top: 100px; right: 25px;min-width: 200px;">
+        <div th:if="${submitMessage}" class="toast fade hide bg-success"  data-autohide="false">
+            <div class="toast-header">
+                <strong class="mr-auto">Success</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="toast-body" th:text="${submitMessage}"></div>
+        </div>
+
+        <div th:if="${warnMessage}" class="toast fade hide bg-warning" data-autohide="false">
+            <div class="toast-header">
+                <strong class="mr-auto">Warning</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="toast-body" th:text="${warnMessage}"></div>
+        </div>
+
+        <div th:if="${errorMessage}" class="toast fade hide bg-danger" data-autohide="false">
+            <div class="toast-header">
+                <strong class="mr-auto">Error</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="toast-body" th:text="${errorMessage}"></div>
+        </div>
+    </div>
 
     <div class="main-content p-4" >
 
@@ -57,15 +89,6 @@
                 </div>
                 <div>
                     <button type="submit" class="btn btn-lg btn-primary" style="padding: 0.6rem 1rem;">Submit</button>
-                    <div th:if="${submitMessage}" class="ml-4 mb-0 alert d-inline-block" th:classappend="alert-success" role="alert">
-                        <span th:utext="${submitMessage}" th:remove="tag"/>
-                    </div>
-                    <div th:if="${warnMessage}" class="ml-4 mb-0 alert d-inline-block" th:classappend="alert-warning" role="alert">
-                        <span th:utext="${warnMessage}" th:remove="tag"/>
-                    </div>
-                    <div th:if="${errorMessage}" class="ml-4 mb-0 alert d-inline-block" th:classappend="alert-danger" role="alert">
-                        <span th:utext="${errorMessage}" th:remove="tag"/>
-                    </div>
                 </div>
             </form>
 
