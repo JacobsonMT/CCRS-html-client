@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>List 2.0 - Job Description</title>
+    <title th:text="${@siteSettings.title + ' - Job Description'}">Job Description</title>
     <object th:include="fragments/head :: head" th:remove="tag" />
     <script src="https://code.highcharts.com/6.0.3/highcharts.js"></script>
     <script src="https://code.highcharts.com/6.0.3/modules/heatmap.js"></script>

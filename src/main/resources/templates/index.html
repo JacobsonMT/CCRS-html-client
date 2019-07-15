@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>List 2.0</title>
+    <title th:text="${@siteSettings.title}">List-SI</title>
     <object th:include="fragments/head :: head" th:remove="tag" />
     <link rel="stylesheet" type="text/css" th:href="@{/css/index.css}"/>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>

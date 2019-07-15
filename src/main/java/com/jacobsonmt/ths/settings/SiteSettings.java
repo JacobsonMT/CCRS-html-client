@@ -13,6 +13,9 @@ import javax.validation.constraints.Email;
 @Setter
 public class SiteSettings {
 
+    private String title;
+    private String fullTitle;
+
     private String host;
     private String context;
 
