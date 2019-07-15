@@ -13,6 +13,9 @@ nav.navbar {
     -webkit-box-shadow: 0 4px 0px 0px #999;
     -moz-box-shadow: 0 4px 0px 0px #999;
     box-shadow: 0 4px 0px 0px #999;
+    color: #333333;
+    font-family: 'Open Sans', sans-serif;
+    letter-spacing: 1px;
 }
 
 div.brand > p {
@@ -22,10 +25,7 @@ div.brand > p {
     text-align: right;
 }
 
-div.brand > h1 {
-    color: #333333;
-    font-family: 'Open Sans', sans-serif;
-    letter-spacing: 1px;
+div.ubc-brand > h1  {
     font-size: 18px;
 }
 
