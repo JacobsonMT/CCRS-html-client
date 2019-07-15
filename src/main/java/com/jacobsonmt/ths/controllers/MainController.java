@@ -56,11 +56,6 @@ public class MainController {
         return "documentation";
     }
 
-    @GetMapping("/faq")
-    public String faq( Model model) {
-        return "faq";
-    }
-
     @GetMapping("/contact")
     public String contact( Model model) {
         model.addAttribute("contactForm", new ContactForm());
