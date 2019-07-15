@@ -13,10 +13,10 @@
         $(document).ready(function () {
             $("#fastaExampleBtn").click(function(e) {
                 $("#fasta").val(
-                    ">Example_P07766\r\n" +
+                    ">P07766 OX=9606\r\n" +
                     "MQSGTHWRVLGLCLLSVGVWGQDGNEEMGGITQTPYKVSISGTTVILTCPQYPGSEILWQHNDKNIGGDEDDKNIGSDEDHLSLKEFSELEQSGYYVCYPRGSKPEDANFYLYLRARVCENCMEMDVMSVATIVIVDICITGGLLLLVYYWSKNRKAKAKPVTRGAGAGGRQRGQNKERPPPVPNPDYEPIRKGQRDLYSGLNQRRI\r\n" +
-                    ">Example_A0A075B6I1\r\n" +
-                    "MAWTPLLLLFPLLLHCTGSLSQPVLTQSSSASASLGSSVKLTCTLSSGHSSYIIAWHQQQPGKAPRYLMKLEGSGSYNKGSGVPDRFSGSSSGADRYLTISNLQFEDEADYYCETWDSNT"
+                    ">Q764N2|CD3D_PIG\r\n" +
+                    "MEHSRFLSGLILAAFLSRVSPYEVEMEELEDKVFVSCNTSIIWLQGTEGELLSDKKIDLGKRILDPRGLYKCNAPKEQDSNSKIFLQVYYRMCQNCVELDSATLAGIIVTDIIATLLLALGVYCFAGHEMGRFSRAADTQDLLRNDQLYQPLRDRNDGQYSRLGENWARNK"
                 )
             });
             $('.toast').toast('show');
@@ -63,11 +63,9 @@
 
     <div class="main-content p-4" >
 
-        <p><b>List 2.0</b> predicts the deleteriousness of amino acid mutations in human protein sequences based on Taxonomy distances.</p>
+        <p><b>LIST-SI</b> predicts the deleteriousness of amino acid mutations in human protein sequences based on Taxonomy distances.</p>
 
-        <div th:replace="fragments/title :: title(title='Submit Job(s)')" th:remove="tag">...</div>
-
-        <div class="p-4" style="max-width: 1100px;">
+        <div class="p-2" style="max-width: 1100px;">
             <form method="POST" enctype="multipart/form-data" action="/">
                 <!--<div class="form-group">-->
                     <!--<label for="fastaFile">FASTA file</label>-->
@@ -75,17 +73,20 @@
                     <!--<small id="fastaFileHelp" class="form-text text-muted">Sequence file in the FASTA format labeled with matching chain ID.</small>-->
                 <!--</div>-->
                 <div class="form-group">
-                    <label for="fasta">Enter protein sequences in FASTA format</label>
+                    <label for="fasta">Enter protein sequences with identifier headers in FASTA format. <a id="fastaExampleBtn" href="#">See examples</a>.</label>
                     <div class="search-wrapper">
                         <textarea rows="6" class="form-control search-box" style="resize:both;" id="fasta" name="fasta" aria-describedby="fastaHelp" required></textarea>
                         <button class="close-icon" type="reset"></button>
                     </div>
-                    <small id="fastaHelp" class="form-text text-muted">Sequences with identifier headers in FASTA format. <a id="fastaExampleBtn" href="#">See example</a>.</small>
+                    <small id="fastaHelp" class="form-text text-muted">Optional OX=n can be included in the FASTA header to explicitly identify the sequence Taxa ID as n. Otherwise, the Taxa ID of the sequence with the highest alignment (Bits) score will be used as the query Taxa ID. Taxa IDs can be obtained from <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi" target="_blank" rel="noopener noreferrer">NCBI Taxonomy name/id</a>.
+                        <br />
+                        Precomputed predictions of virtually all human protein sequences identified by their UniProt accession and Ensemble transcriptome id can be found <a href="https://d9606.list-si.msl.ubc.ca/" target="_blank" rel="noopener noreferrer">here</a>.
+                    </small>
                 </div>
                 <div class="form-group" th:if="${!@applicationSettings.isDisableEmails()}">
                     <label for="email">(Optional) Email Address</label>
                     <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-                    <small id="emailHelp" class="form-text text-muted">Only used to notify you when your job finishes. We'll never share your email with anyone.</small>
+                    <small id="emailHelp" class="form-text text-muted">Only used to notify you when your job finishes. It won't be saved.</small>
                 </div>
                 <div>
                     <button type="submit" class="btn btn-lg btn-primary" style="padding: 0.6rem 1rem;">Submit</button>
