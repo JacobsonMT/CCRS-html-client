@@ -1,7 +1,7 @@
 html {
     position: relative;
     min-height: 100%;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 body {
@@ -49,7 +49,7 @@ footer .website-attribution {
     top: 15px;
 }
 
-@media screen and (max-width: 1200px) {
+@media screen and (max-width: 1300px) {
 
     body {
         /* Margin bottom by footer height */
