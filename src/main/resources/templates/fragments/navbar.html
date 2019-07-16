@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-primary justify-content-between">
+<nav class="navbar navbar-expand-lg navbar-light bg-primary justify-content-between" style="font-size:90%;">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -25,7 +25,7 @@
 <!--        <img th:src="@{/img/logo.png}" style="height: 50px;" class="pr-2">-->
         <div class="brand" style="vertical-align: middle;display:inline-block;">
             <h1 class="font-weight-bold m-0" style="text-align: center;font-size:200%" th:text="${@siteSettings.title}">LIST-SI</h1>
-            <h4 th:text="${@siteSettings.subtitle}">Species Independent</h4>
+            <h5 th:text="${@siteSettings.subtitle}">Species Independent</h5>
         </div>
     </a>
     <div class="navbar-collapse collapse">
