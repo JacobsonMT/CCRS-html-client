@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>List 2.0 - Job Queue</title>
+    <title th:text="${@siteSettings.title + ' - Job Queue'}">Job Queue</title>
     <object th:include="fragments/head :: head" th:remove="tag" />
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>

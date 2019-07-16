@@ -60,7 +60,7 @@ public class EmailService {
         boolean hasAttachment = (attachment != null && !Objects.equals( attachment.getOriginalFilename(), "" ));
         content.append( "<p>File Attached: " + hasAttachment + "</p>" );
 
-        sendMessage( "List 2.0 Help - Contact Support", content.toString(), siteSettings.getContactEmail(), hasAttachment ? attachment : null );
+        sendMessage( siteSettings.getTitle() + " Help - Contact Support", content.toString(), siteSettings.getContactEmail(), hasAttachment ? attachment : null );
     }
 
 }
