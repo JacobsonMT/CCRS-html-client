@@ -1,5 +1,6 @@
 package com.jacobsonmt.ths.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
@@ -23,7 +24,7 @@ public class THSJob  {
 
     // Information on creation of job
     private String jobId;
-    private String clientId; //TODO: remove me
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) private String clientId;
     private String label;
     private String status;
     private boolean running;
@@ -31,7 +32,7 @@ public class THSJob  {
     private boolean complete;
     private Integer position;
     private String email;
-    private boolean hidden;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) private boolean hidden;
     private Date submittedDate;
     private Date startedDate;
     private Date finishedDate;

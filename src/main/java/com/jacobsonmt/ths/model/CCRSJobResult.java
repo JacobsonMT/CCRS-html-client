@@ -1,5 +1,6 @@
 package com.jacobsonmt.ths.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 public final class CCRSJobResult {
 
-    private String resultCSV; //TODO: Kind of clunky storing two representations of the same thing
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String resultCSV;
     private int taxaId;
     private List<Base> sequence;
 
