@@ -8,17 +8,19 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.Series.CLIENT_ERROR;
+import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
 
 @Log4j2
 @Service
@@ -45,7 +47,8 @@ public class CCRSService {
     }
 
     public THSJob getJob(String jobId) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
@@ -71,7 +74,8 @@ public class CCRSService {
     }
 
     public ResponseEntity<String> downloadJobResultContent(String jobId) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
@@ -87,7 +91,8 @@ public class CCRSService {
     }
 
     public ResponseEntity<String> downloadJobInputFASTA(String jobId) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
@@ -103,7 +108,8 @@ public class CCRSService {
     }
 
     public String deleteJob(String jobId) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
@@ -152,7 +158,8 @@ public class CCRSService {
     }
 
     public List<THSJob> getJobsForUser( String userId, boolean withResults ) {
-        RestTemplate restTemplate = new RestTemplate();
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
@@ -218,5 +225,24 @@ public class CCRSService {
         public void handleError( ClientHttpResponse response) throws IOException {
         }
 
+    }
+
+    public static class RestTemplateResponseErrorHandler
+            implements ResponseErrorHandler {
+
+        @Override
+        public boolean hasError(ClientHttpResponse httpResponse)
+                throws IOException {
+
+            return (
+                    httpResponse.getStatusCode().series() == CLIENT_ERROR
+                            || httpResponse.getStatusCode().series() == SERVER_ERROR);
+        }
+
+        @Override
+        public void handleError(ClientHttpResponse httpResponse)
+                throws IOException {
+            throw new ResponseStatusException( httpResponse.getStatusCode() );
+        }
     }
 }
