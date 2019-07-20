@@ -7,8 +7,6 @@ import com.jacobsonmt.ths.services.CCRSService;
 import com.jacobsonmt.ths.utils.InputStreamUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -152,30 +150,12 @@ public class JobController {
 
     @GetMapping("/job/{jobId}/resultCSV")
     public ResponseEntity<String> jobResultCSV( @PathVariable("jobId") String jobId) {
-        THSJob job = ccrsService.getJob( jobId );
-
-        // test for not null and complete
-        if ( job != null && job.isComplete() && !job.isFailed() ) {
-            return ResponseEntity.ok()
-                    .contentType( MediaType.parseMediaType("application/octet-stream"))
-                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + ".list\"")
-                    .body(job.getResult().getResultCSV());
-        }
-        return ResponseEntity.badRequest().body( "" );
+        return ccrsService.downloadJobResultContent( jobId );
     }
 
     @GetMapping("/job/{jobId}/inputFASTA")
     public ResponseEntity<String> jobInputFASTA( @PathVariable("jobId") String jobId) {
-        THSJob job = ccrsService.getJob( jobId );
-
-        // test for not null and complete
-        if ( job != null ) {
-            return ResponseEntity.ok()
-                    .contentType( MediaType.parseMediaType("application/octet-stream"))
-                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + ".fasta\"")
-                    .body(job.getInputFASTAContent());
-        }
-        return ResponseEntity.badRequest().body( "" );
+        return ccrsService.downloadJobInputFASTA( jobId );
     }
 
 

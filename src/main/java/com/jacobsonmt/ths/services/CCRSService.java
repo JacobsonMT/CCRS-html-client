@@ -70,6 +70,38 @@ public class CCRSService {
 
     }
 
+    public ResponseEntity<String> downloadJobResultContent(String jobId) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity entity = new HttpEntity(createHeaders());
+        // getForObject cannot specify headers so we use exchange
+
+        log.info( "Download Result Content for Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
+
+        return restTemplate.exchange( applicationSettings.getProcessServerURI() + "/job/{jobId}/resultCSV",
+                HttpMethod.GET,
+                entity,
+                String.class,
+                jobId
+        );
+
+    }
+
+    public ResponseEntity<String> downloadJobInputFASTA(String jobId) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity entity = new HttpEntity(createHeaders());
+        // getForObject cannot specify headers so we use exchange
+
+        log.info( "Download Input FASTA for Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
+
+        return restTemplate.exchange( applicationSettings.getProcessServerURI() + "/job/{jobId}/inputFASTA",
+                HttpMethod.GET,
+                entity,
+                String.class,
+                jobId
+        );
+
+    }
+
     public String deleteJob(String jobId) {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity entity = new HttpEntity(createHeaders());
