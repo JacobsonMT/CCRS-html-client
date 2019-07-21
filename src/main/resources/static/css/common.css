@@ -69,3 +69,25 @@ footer .website-attribution {
 div.container {
     overflow-x: hidden;
 }
+
+@media (min-width: 992px) {
+    .navbar-brand.abs
+    {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 991px) {
+
+    div.navbar-collapse ul.navbar-nav.collapse-right {
+        text-align:right;
+    }
+
+    div.navbar-collapse ul.navbar-nav.collapse-center {
+        text-align:center;
+    }
+
+
+}
