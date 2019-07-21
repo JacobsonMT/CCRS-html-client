@@ -27,7 +27,7 @@
 </head>
 <body>
 <div th:replace="fragments/navbar :: navbar(home)">...</div>
-<div class="container p-4">
+<div class="container-fluid p-4">
 
     <div style="position: absolute; top: 100px; right: 25px;min-width: 200px;">
         <div th:if="${submitMessage}" class="toast fade hide bg-success"  data-autohide="false">
@@ -65,7 +65,7 @@
 
         <p><b>LIST-SI</b> predicts the deleteriousness of amino acid mutations in human protein sequences based on Taxonomy distances.</p>
 
-        <div class="p-2" style="max-width: 1100px;">
+        <div class="p-2">
             <form method="POST" enctype="multipart/form-data" action="/">
                 <!--<div class="form-group">-->
                     <!--<label for="fastaFile">FASTA file</label>-->
