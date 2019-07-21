@@ -105,9 +105,9 @@ public class JobController {
         return "job :: #job-view-content";
     }
 
-    @GetMapping(value = "/job/{jobId}/sequence", produces = "application/json")
+    @GetMapping(value = "/job/{jobId}/bases", produces = "application/json")
     @ResponseBody
-    public List<Base> getJobResultSequence( @PathVariable("jobId") String jobId) {
+    public List<Base> getJobResultBases( @PathVariable("jobId") String jobId) {
         THSJob job = ccrsService.getJob( jobId ).getBody();
 
         if (job==null) {
@@ -115,7 +115,7 @@ public class JobController {
         }
 
         if ( job.isComplete() && !job.isFailed() ) {
-            return job.getResult().getSequence();
+            return job.getResult().getBases();
         }
 
         return new ArrayList<>();

@@ -73,9 +73,9 @@ public class CCRSService {
             // Obfuscate email
             job.setEmail( THSJob.obfuscateEmail( job.getEmail() ) );
 
-            // Create sequences
+            // Create bases
             if ( job.getResult() != null ) {
-                job.migrateCSVResultToSequence();
+                job.migrateCSVResultToBases();
             }
         }
 
@@ -183,7 +183,7 @@ public class CCRSService {
 
         if ( withResults && response.getBody() != null ) {
             for ( THSJob job : response.getBody() ) {
-                job.migrateCSVResultToSequence();
+                job.migrateCSVResultToBases();
             }
         }
 
