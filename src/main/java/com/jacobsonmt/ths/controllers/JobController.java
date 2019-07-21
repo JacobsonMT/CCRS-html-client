@@ -80,28 +80,13 @@ public class JobController {
     public String job( @PathVariable("jobId") String jobId,
                        Model model) throws IOException {
 
-        THSJob job = ccrsService.getJob( jobId );
+        THSJob job = ccrsService.getJob( jobId ).getBody();
 
         if (job==null) {
             throw new JobNotFoundException();
         }
 
-        model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
-
-        return "job";
-    }
-
-    @GetMapping("/job2/{jobId}")
-    public String job2( @PathVariable("jobId") String jobId,
-                       Model model) throws IOException {
-
-        THSJob job = ccrsService.getJob( jobId );
-
-        if (job==null) {
-            throw new JobNotFoundException();
-        }
-
-        model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
+        model.addAttribute("job", job);
 
         return "job";
     }
@@ -109,13 +94,13 @@ public class JobController {
     @GetMapping("/job/{jobId}/content")
     public String getJobViewContent( @PathVariable("jobId") String jobId,
                                      Model model) {
-        THSJob job = ccrsService.getJob( jobId );
+        THSJob job = ccrsService.getJob( jobId ).getBody();
 
         if (job==null) {
             throw new JobNotFoundException();
         }
 
-        model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
+        model.addAttribute("job", job );
 
         return "job :: #job-view-content";
     }
@@ -123,7 +108,7 @@ public class JobController {
     @GetMapping(value = "/job/{jobId}/sequence", produces = "application/json")
     @ResponseBody
     public List<Base> getJobResultSequence( @PathVariable("jobId") String jobId) {
-        THSJob job = ccrsService.getJob( jobId );
+        THSJob job = ccrsService.getJob( jobId ).getBody();
 
         if (job==null) {
             throw new JobNotFoundException();
@@ -138,14 +123,7 @@ public class JobController {
 
     @GetMapping("/job/{jobId}/delete")
     public ResponseEntity<String> deleteJob( @PathVariable("jobId") String jobId ) {
-
-        String result = ccrsService.deleteJob( jobId );
-
-        if (result==null) {
-            throw new JobNotFoundException();
-        }
-
-        return ResponseEntity.ok( "Job Deleted" );
+        return ccrsService.deleteJob( jobId );
     }
 
     @GetMapping("/job/{jobId}/resultCSV")

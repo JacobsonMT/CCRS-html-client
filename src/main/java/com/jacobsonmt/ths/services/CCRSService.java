@@ -8,7 +8,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.DefaultResponseErrorHandler;
@@ -46,9 +49,9 @@ public class CCRSService {
         return restTemplate.postForEntity( applicationSettings.getProcessServerURI() + "/job/submit", request, JobSubmissionResponse.class );
     }
 
-    public THSJob getJob(String jobId) {
+    public ResponseEntity<THSJob> getJob(String jobId) {
         RestTemplate restTemplate = new RestTemplateBuilder()
-                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
+                .errorHandler( new NoOpResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
@@ -65,11 +68,18 @@ public class CCRSService {
         // Add parsed version of result csv to aid in creation of front-end visualisations
         THSJob job = response.getBody();
 
-        if (job != null && job.getResult() != null) {
-            job.migrateCSVResultToSequence();
+        if ( job != null ) {
+
+            // Obfuscate email
+            job.setEmail( THSJob.obfuscateEmail( job.getEmail() ) );
+
+            // Create sequences
+            if ( job.getResult() != null ) {
+                job.migrateCSVResultToSequence();
+            }
         }
 
-        return response.getBody();
+        return response;
 
     }
 
@@ -107,23 +117,20 @@ public class CCRSService {
 
     }
 
-    public String deleteJob(String jobId) {
+    public ResponseEntity<String> deleteJob( String jobId) {
         RestTemplate restTemplate = new RestTemplateBuilder()
-                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
+                .errorHandler( new NoOpResponseErrorHandler() )
+                .build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
         log.info( "Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
-        ResponseEntity<String> response
-                = restTemplate.exchange(applicationSettings.getProcessServerURI() + "/job/{jobId}/delete",
-                HttpMethod.GET,
+        return restTemplate.exchange( applicationSettings.getProcessServerURI() + "/job/{jobId}/delete",
+                HttpMethod.DELETE,
                 entity,
                 String.class,
                 jobId
         );
-
-        return response.getBody();
-
     }
 
     public synchronized boolean hasChanged() {
@@ -153,11 +160,11 @@ public class CCRSService {
         return false;
     }
 
-    public List<THSJob> getJobsForUser( String userId ) {
+    public ResponseEntity<List<THSJob>> getJobsForUser( String userId ) {
         return getJobsForUser( userId, false );
     }
 
-    public List<THSJob> getJobsForUser( String userId, boolean withResults ) {
+    public ResponseEntity<List<THSJob>> getJobsForUser( String userId, boolean withResults ) {
         RestTemplate restTemplate = new RestTemplateBuilder()
                 .errorHandler( new RestTemplateResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
@@ -180,7 +187,7 @@ public class CCRSService {
             }
         }
 
-        return response.getBody();
+        return response;
 
     }
 
@@ -242,7 +249,7 @@ public class CCRSService {
         @Override
         public void handleError(ClientHttpResponse httpResponse)
                 throws IOException {
-            throw new ResponseStatusException( httpResponse.getStatusCode() );
+            throw new ResponseStatusException( httpResponse.getStatusCode(), "", null );
         }
     }
 }

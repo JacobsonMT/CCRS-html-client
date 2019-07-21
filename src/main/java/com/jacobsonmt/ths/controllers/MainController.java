@@ -31,14 +31,14 @@ public class MainController {
     @GetMapping("/")
     public String index( Model model) {
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ).getBody());
         return "index";
     }
 
     @GetMapping("/job-table")
     public String getJobTable( Model model) {
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ).getBody());
 
         return "index :: #job-table";
     }
@@ -46,7 +46,7 @@ public class MainController {
     @GetMapping("/queue")
     public String queue( Model model) {
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ).getBody());
 
         return "queue";
     }
