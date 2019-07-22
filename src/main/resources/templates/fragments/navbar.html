@@ -3,37 +3,17 @@
       xmlns:th="http://www.thymeleaf.org">
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-primary justify-content-between" style="font-size:90%;" th:fragment="navbar(activeTab)">
-    <div class="navbar-brand m-0 abs" style="vertical-align: middle;display:inline-block;">
+    <div class="navbar-brand mr-auto" style="vertical-align: middle;display:inline-block;">
         <h1 class="font-weight-bold m-0" style="text-align: center;font-size:200%" th:text="${@siteSettings.title}">LIST-SI</h1>
         <h5 th:text="${@siteSettings.subtitle}">Species Independent</h5>
     </div>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="navbar-collapse collapse" id="collapsingNavbar">
-        <ul class="navbar-nav collapse-right"style="font-size:150%;font-weight: bold;">
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activeTab == 'home'} ? 'active' : null" th:href="@{/}" href="/">Jobs</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activeTab == 'documentation'} ? 'active' : null" th:href="@{/documentation}" href="/documentation">Documentation</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activeTab == 'contact'} ? 'active' : null" th:href="@{/contact}" href="/contact">Contact</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav ml-auto collapse-center">
-            <li class="nav-item">
-                <div class="brand mr-3 mt-3 ubc-brand" style="vertical-align: middle;display:inline-block;">
-                    <h4 class="font-weight-bold m-0 text-center" style="font-size:1.4rem;">Michael Smith Laboratories</h4>
-                    <p class="text-uppercase text-center"><b>University of British Columbia</b></p>
-                </div>
-                <a class="navbar-brand mr-0" href="https://www.ubc.ca/">
-                    <img th:src="@{/img/UBC-logo-signature-blue.gif}" style="height: 75px;" class="pr-2">
-                </a>
-            </li>
-        </ul>
+    <div class="brand mr-3 mt-3 ubc-brand" style="vertical-align: middle;display:inline-block;">
+        <h4 class="font-weight-bold m-0 text-center" style="font-size:1.4rem;">Michael Smith Laboratories</h4>
+        <p class="text-uppercase text-center"><b>University of British Columbia</b></p>
     </div>
+    <a class="navbar-brand mr-0" href="https://www.ubc.ca/">
+        <img th:src="@{/img/UBC-logo-signature-blue.gif}" style="height: 75px;" class="pr-2">
+    </a>
 
 </nav>
 </body>
