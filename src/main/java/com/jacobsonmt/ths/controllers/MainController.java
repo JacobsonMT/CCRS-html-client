@@ -89,4 +89,14 @@ public class MainController {
     public String contact() {
         return "maintenance";
     }
+
+    @GetMapping("/api-docs")
+    public String test() {
+        return "docs/swagger-ui.html";
+    }
+
+    @GetMapping("/api-docs/swagger-ui.html")
+    public String swagger() {
+        return "docs/swagger-ui.html";
+    }
 }
