@@ -32,8 +32,8 @@
     <div style="position: absolute; top: 100px; right: 25px;min-width: 200px;">
         <div th:if="${submitMessage}" class="toast fade hide bg-success" data-autohide="true" data-delay="5000">
             <div class="toast-header" style="border-bottom: none;">
-                <div class="toast-body" th:text="${submitMessage}"></div>
-                <button type="button" class="ml-2 close" data-dismiss="toast" aria-label="Close">
+                <div class="toast-body mr-2" th:text="${submitMessage}"></div>
+                <button type="button" class="close" style="position: absolute;right: 0.5rem;" data-dismiss="toast" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
@@ -41,8 +41,8 @@
 
         <div th:if="${warnMessage}" class="toast fade hide bg-warning" data-autohide="true" data-delay="5000">
             <div class="toast-header" style="border-bottom: none;">
-                <div class="toast-body" th:text="${warnMessage}"></div>
-                <button type="button" class="ml-2 close" data-dismiss="toast" aria-label="Close">
+                <div class="toast-body mr-2" th:text="${warnMessage}"></div>
+                <button type="button" class="close" style="position: absolute;right: 0.5rem;" data-dismiss="toast" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
@@ -50,8 +50,8 @@
 
         <div th:if="${errorMessage}" class="toast fade hide bg-danger" data-autohide="true" data-delay="5000">
             <div class="toast-header" style="border-bottom: none;">
-                <div class="toast-body" th:text="${errorMessage}"></div>
-                <button type="button" class="ml-2 close" data-dismiss="toast" aria-label="Close">
+                <div class="toast-body mr-2" th:text="${errorMessage}"></div>
+                <button type="button" class="close" style="position: absolute;right: 0.5rem;" data-dismiss="toast" aria-label="Close">
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
