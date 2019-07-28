@@ -37,7 +37,7 @@ public class THSJob  {
     private Date startedDate;
     private Date finishedDate;
     private String inputFASTAContent;
-    private CCRSJobResult result;
+    private THSJobResult result;
     private long executionTime;
 
     public static String obfuscateEmail( String email ) {
