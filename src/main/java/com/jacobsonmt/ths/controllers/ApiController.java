@@ -5,10 +5,7 @@ import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.services.CCRSService;
 import com.jacobsonmt.ths.settings.SiteSettings;
 import io.swagger.annotations.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,30 +52,39 @@ public class ApiController {
 
 
     @Getter
-    @AllArgsConstructor
+    @Setter
+    @NoArgsConstructor
     @ApiModel( description = "All details about the job(s) submission." )
-    private final class SubmissionResult {
+    private static final class APIJobSubmissionResult extends CCRSService.JobSubmissionResponse {
 
-        @ApiModelProperty( notes = "Job ids for submitted jobs, in order of submission",
-                example = "[\"8205ace5-8fa7-4f90-b0b1-ae02d5f6081d\", \"e48f1dfc-2acc-4f2f-b176-e5d13c46f7c9\"]" )
-        private final List<String> jobIds;
+        public APIJobSubmissionResult( CCRSService.JobSubmissionResponse jsr, String userId, String fasta, String email){
+            super(jsr.getMessages(), jsr.getAcceptedJobs(), jsr.getRejectedJobHeaders(), jsr.getTotalRequestedJobs());
+            this.userId = userId;
+            this.fasta = fasta;
+            this.email = email;
+        }
+
+        public APIJobSubmissionResult( String userId, String fasta, String email){
+            super();
+            this.userId = userId;
+            this.fasta = fasta;
+            this.email = email;
+        }
+
         @ApiModelProperty( notes = "Unique identifier for you the user. This should be included in all submissions.",
                 example = "59268BF313712A137594345B72A56E40" )
-        private final String userId;
-        @ApiModelProperty( notes = "Information related to the submissions. Can be validation warnings/errors.",
-                example = "Multiple Jobs Submitted." )
-        private final String message;
+        private String userId;
         @ApiModelProperty( notes = "Supplied input FASTA",
                 example = ">P07766 OX=9606\nMQSGTHWRVLGLCLLSVGVWGQDGNEEMGGITQTPYKVSISGTTVILTCPQYPGSEILWQHNDKNI" )
-        private final String fasta;
+        private String fasta;
         @ApiModelProperty( notes = "If supplied, an email will be sent to this address to notify you of status changes",
                 example = "example@email.com" )
-        private final String email;
+        private String email;
 
     }
 
     @ApiOperation( value = "Submit job to be processed",
-            response = SubmissionResult.class,
+            response = APIJobSubmissionResult.class,
             notes = "Check on status of particular job using /job/{jobId} endpoint" )
     @ResponseStatus( value = HttpStatus.ACCEPTED )
     @ApiResponses( value = {
@@ -89,7 +95,7 @@ public class ApiController {
             @ApiResponse( code = 404, message = "The resource you were trying to reach is not found" )
     } )
     @RequestMapping( value = "/submit", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE} )
-    public ResponseEntity<SubmissionResult> submitJob(
+    public ResponseEntity<APIJobSubmissionResult> submitJob(
             @ApiParam( value = "All details about the job submission", required = true )
             @Valid @RequestBody SubmissionContent submissionContent
     ) {
@@ -100,60 +106,34 @@ public class ApiController {
             userId = UUID.randomUUID().toString();
         }
 
-        if ( submissionContent.getFasta() == null || submissionContent.getFasta().isEmpty() ) {
-            return ResponseEntity.badRequest().body( new SubmissionResult( null,
-                    userId,
-                    "Empty FASTA",
-                    "",
-                    submissionContent.getEmail()
-            ) );
-        }
-
         ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( userId,
                 "",
                 submissionContent.getFasta(),
                 submissionContent.getEmail(),
                 true );
 
-        if ( jobSubmissionResponse.getStatusCodeValue() == 202 && jobSubmissionResponse.getBody() != null ) {
-            List<String> jobIds = jobSubmissionResponse.getBody().getJobIds();
-            StringBuilder message;
-            if ( jobIds.size() > 1 ) {
-                message = new StringBuilder( "Multiple Jobs Submitted." );
-            } else {
-                message = new StringBuilder( "Job Submitted." );
-            }
-
-            if ( jobSubmissionResponse.getBody().getMessage().isEmpty() ) {
-                message.append( " " ).append( jobSubmissionResponse.getBody().getMessage() );
-            }
-
+        if (jobSubmissionResponse.getBody() != null) {
             return ResponseEntity
                     .status( jobSubmissionResponse.getStatusCodeValue() )
                     .location( UriBuilder
                             .fromPath( siteSettings.getFullUrl() )
-                            .scheme( "http" )
                             .path( "api/user/{userId}/jobs" ).build( userId )
                     )
-                    .body( new SubmissionResult(
-                            jobIds,
+                    .body( new APIJobSubmissionResult(
+                            jobSubmissionResponse.getBody(),
                             userId,
-                            message.toString(),
                             submissionContent.getFasta(),
                             submissionContent.getEmail()
                     ) );
-
         } else {
             return ResponseEntity
-                    .status( jobSubmissionResponse.getStatusCodeValue() )
-                    .body( new SubmissionResult( null,
+                    .status( HttpStatus.INTERNAL_SERVER_ERROR )
+                    .body( new APIJobSubmissionResult(
                             userId,
-                            jobSubmissionResponse.getBody() != null ? jobSubmissionResponse.getBody().getMessage() : "Server Error",
                             submissionContent.getFasta(),
                             submissionContent.getEmail()
                     ) );
         }
-
     }
 
     @ApiOperation( value = "Retrieve all jobs for a specific user" )

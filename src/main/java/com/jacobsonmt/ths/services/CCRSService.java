@@ -1,8 +1,10 @@
 package com.jacobsonmt.ths.services;
 
+import com.jacobsonmt.ths.model.Message;
 import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.settings.ApplicationSettings;
 import com.jacobsonmt.ths.settings.SiteSettings;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,13 +218,19 @@ public class CCRSService {
     }
 
     @ToString
-    @Getter
     @Setter
+    @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class JobSubmissionResponse {
-        private String message;
-        private List<String> jobIds;
+        @ApiModelProperty( notes = "Information related to the job submissions. Can be info/warnings/errors.")
+        private List<Message> messages;
+        @ApiModelProperty( notes = "Jobs accepted for submission.")
+        private List<THSJob> acceptedJobs;
+        @ApiModelProperty( notes = "Headers of jobs that were rejected for any reason (usually related to validation).")
+        private List<String> rejectedJobHeaders;
+        @ApiModelProperty( notes = "Count of jobs that were sent (accepted and rejected).")
+        private int totalRequestedJobs;
     }
 
     private static class NoOpResponseErrorHandler extends
