@@ -1,5 +1,6 @@
 package com.jacobsonmt.ths.services;
 
+import com.jacobsonmt.ths.model.Message;
 import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.settings.ApplicationSettings;
 import com.jacobsonmt.ths.settings.SiteSettings;
@@ -216,13 +217,14 @@ public class CCRSService {
     }
 
     @ToString
-    @Getter
     @Setter
-    @AllArgsConstructor
+    @Getter
     @NoArgsConstructor
     public static class JobSubmissionResponse {
-        private String message;
-        private List<String> jobIds;
+        private List<Message> messages;
+        private List<THSJob> acceptedJobs;
+        private List<String> rejectedJobHeaders;
+        private int totalSubmittedJobs;
     }
 
     private static class NoOpResponseErrorHandler extends

@@ -56,21 +56,10 @@ public class JobController {
                 email,
                 true );
 
-        if ( jobSubmissionResponse.getStatusCodeValue() == 202 && jobSubmissionResponse.getBody() != null) {
-            List<String> jobIds = jobSubmissionResponse.getBody().getJobIds();
-            StringBuilder message;
-            if ( jobIds.size() > 1 ) {
-                message = new StringBuilder( "Multiple Jobs Submitted" );
-            } else {
-                message = new StringBuilder( "Job Submitted" );
-            }
-            redirectAttributes.addFlashAttribute( "submitMessage", message.toString() );
-            if (!jobSubmissionResponse.getBody().getMessage().isEmpty()) {
-                redirectAttributes.addFlashAttribute( "warnMessage", jobSubmissionResponse.getBody().getMessage() );
-            }
+        if (jobSubmissionResponse.getBody() != null) {
+            redirectAttributes.addFlashAttribute( "messages", jobSubmissionResponse.getBody().getMessages() );
         } else {
-            redirectAttributes.addFlashAttribute( "errorMessage",
-                    jobSubmissionResponse.getBody() != null ? jobSubmissionResponse.getBody().getMessage() : "Server Error" );
+            redirectAttributes.addFlashAttribute( "errorMessage", "Server Error" );
         }
 
         return "redirect:/";
