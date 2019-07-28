@@ -46,7 +46,7 @@ public class ApiController {
                 example = "59268BF313712A137594345B72A56E40" )
         private String userId = "";
         @ApiModelProperty( notes = "If supplied an email will be sent to notify you of status changes",
-                example = "example@email.com" )
+                example = "email@example.com" )
         private String email = "";
     }
 
@@ -78,7 +78,7 @@ public class ApiController {
                 example = ">P07766 OX=9606\nMQSGTHWRVLGLCLLSVGVWGQDGNEEMGGITQTPYKVSISGTTVILTCPQYPGSEILWQHNDKNI" )
         private String fasta;
         @ApiModelProperty( notes = "If supplied, an email will be sent to this address to notify you of status changes",
-                example = "example@email.com" )
+                example = "email@example.com" )
         private String email;
 
     }

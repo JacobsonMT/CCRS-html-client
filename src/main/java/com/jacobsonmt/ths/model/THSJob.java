@@ -49,7 +49,7 @@ public class THSJob  {
             example = "42" )
     private Integer position;
     @ApiModelProperty( notes = "If supplied, an email will be sent to this address to notify you of status changes. Will display obfuscated for privacy reasons.",
-            example = "ex****@email.com" )
+            example = "em****@example.com" )
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) private boolean hidden;
     @ApiModelProperty( notes = "Date when job was submitted to process queue, null otherwise",
