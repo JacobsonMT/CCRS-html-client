@@ -42,7 +42,8 @@ public class ApiController {
                 example = ">P07766 OX=9606\nMQSGTHWRVLGLCLLSVGVWGQDGNEEMGGITQTPYKVSISGTTVILTCPQYPGSEILWQHNDKNI" )
         @NotBlank( message = "FASTA content missing!" )
         private String fasta;
-        @ApiModelProperty( notes = "Unique identifier for you the user. If not supplied one will be created and returned for you to use in future submissions.",
+        @ApiModelProperty( notes = "Unique identifier for you the user. If not supplied one will be created and returned inside a 'WWW-Authenticate' header.",
+                required = true,
                 example = "59268BF313712A137594345B72A56E40" )
         private String userId = "";
         @ApiModelProperty( notes = "If supplied an email will be sent to notify you of status changes",
@@ -90,7 +91,7 @@ public class ApiController {
     @ApiResponses( value = {
             @ApiResponse( code = 202, message = "Successfully submitted job" ),
             @ApiResponse( code = 400, message = "Malformed content, usually an unrecoverable validation error with the input FASTA" ),
-            @ApiResponse( code = 401, message = "You are not authorized to view the resource" ),
+            @ApiResponse( code = 401, message = "userId not supplied. Please create a unique userId or use the userId located in the supplied 'WWW-Authenticate' header" ),
             @ApiResponse( code = 403, message = "Accessing the resource you were trying to reach is forbidden" ),
             @ApiResponse( code = 404, message = "The resource you were trying to reach is not found" )
     } )
@@ -103,7 +104,9 @@ public class ApiController {
         String userId = submissionContent.getUserId();
 
         if ( userId == null || userId.isEmpty() ) {
-            userId = UUID.randomUUID().toString();
+            return ResponseEntity.status( HttpStatus.UNAUTHORIZED )
+                    .header( "WWW-Authenticate", "userId=" + UUID.randomUUID().toString() )
+                    .body( null );
         }
 
         ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( userId,
