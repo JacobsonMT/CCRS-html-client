@@ -224,7 +224,7 @@ public class CCRSService {
         private List<Message> messages;
         private List<THSJob> acceptedJobs;
         private List<String> rejectedJobHeaders;
-        private int totalSubmittedJobs;
+        private int totalRequestedJobs;
     }
 
     private static class NoOpResponseErrorHandler extends
