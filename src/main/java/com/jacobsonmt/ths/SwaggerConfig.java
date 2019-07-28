@@ -32,6 +32,7 @@ public class SwaggerConfig {
     UiConfiguration uiConfig() {
         return UiConfigurationBuilder.builder()
                 .docExpansion( DocExpansion.LIST) // or DocExpansion.NONE or DocExpansion.FULL
+                .deepLinking( false )
                 .build();
     }
 
