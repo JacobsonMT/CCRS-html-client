@@ -59,7 +59,7 @@
                         <label for="fasta">Enter protein sequences with identifier headers in FASTA format. <a id="fastaExampleBtn" href="#">See examples</a>.</label>
                         <div class="search-wrapper">
                             <textarea rows="6" class="form-control search-box" style="resize:vertical;" id="fasta" name="fasta" aria-describedby="fastaHelp" required=""></textarea>
-                            <button class="close-icon" type="reset"></button>
+                            <button class="close-icon fas fa-times-circle text-danger" type="reset"></button>
                         </div>
                     </div><div class="form-group align-self-end col-lg-4 col-12">
                     <small id="fastaHelp" class="form-text text-muted">Optional OX=n can be included in the FASTA header to explicitly identify the sequence Taxa ID as n. Otherwise, the Taxa ID of the sequence with the highest alignment (Bits) score will be used as the query Taxa ID. Taxa IDs can be obtained from <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi" target="_blank" rel="noopener noreferrer">NCBI Taxonomy name/id</a>.
@@ -68,8 +68,11 @@
                     </small>
                 </div></div>
                 <div class="form-row">
-                    <div class="form-group align-self-end order-3 offset-lg-1 col-lg-2 order-lg-1" style="text-align: center;">
-                        <button type="submit" class="btn btn-lg btn-primary">Submit</button>
+                    <div class="form-group form-submit-wrapper align-self-end order-3 offset-lg-1 col-lg-2 order-lg-1" style="text-align: center;">
+                        <button type="submit" class="btn btn-lg btn-primary mr-3">Submit</button>
+<!--                        <button type="reset" class="btn btn-lg btn-danger">-->
+<!--                            <i class="fas fa-trash mr-1"></i>Clear-->
+<!--                        </button>-->
                     </div>
                     <div class="form-group col-8 offset-lg-1 col-lg-4 order-lg-2" th:if="${!@applicationSettings.isDisableEmails()}">
                         <label for="email">(Optional) Email Address</label>
