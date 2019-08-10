@@ -85,3 +85,21 @@ div.container {
 
 
 }
+
+button.icon-only, a.icon-only  {
+    border: none;
+    background-color: transparent;
+}
+
+a[type=button].icon-only  {
+    padding: 1px 6px;
+    -webkit-appearance: none;
+}
+
+a[type=button].icon-only:hover  {
+    text-decoration: none;
+}
+
+button.icon-only:focus, a.icon-only:focus {
+    outline: none;
+}

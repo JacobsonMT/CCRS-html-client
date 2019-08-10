@@ -20,6 +20,9 @@
                 )
             });
             $('.toast').toast('show');
+            $(function () {
+                $('[data-toggle="popover"]').popover({trigger: 'focus'})
+            })
         });
 
     </script>
@@ -45,7 +48,7 @@
 
     <div class="main-content p-4" >
 
-        <p><b>LIST-SI</b> predicts the deleteriousness of amino acid mutations in human protein sequences based on Taxonomy distances.</p>
+        <h5 class="mb-3"><b>LIST-SI</b> predicts the deleteriousness of amino acid mutations in protein sequences based on Taxonomy distances.</h5>
 
         <div class="p-2">
             <form method="POST" enctype="multipart/form-data" action="/">
@@ -56,30 +59,36 @@
                 <!--</div>-->
                 <div class="form-row">
                     <div class="form-group col-lg-8 col-12">
-                        <label for="fasta">Enter protein sequences with identifier headers in FASTA format. <a id="fastaExampleBtn" href="#">See examples</a>.</label>
+                        <label for="fasta" class="mb-0">Enter protein sequences with identifier headers in FASTA format. <a id="fastaExampleBtn" href="#">Try example</a>.</label>
+                        <small id="emailHelp" class="form-text text-muted mt-0 font-italic">
+                            Optional 'OX=&lt;n&gt;' can be included in the FASTA header to explicitly identify the sequence Taxa ID.
+                            <a tabindex="0" type="button" class="icon-only fas fa-question-circle text-primary" data-html="true"
+                                    data-container="body" data-toggle="popover" data-placement="right"
+                                    data-content="<p>To explicitly set the sequence Taxa ID include 'OX=n' in the header, <b>ex: >P07766 OX=9606</b>.
+                                    Otherwise, the Taxa ID of the sequence with the highest alignment (Bits) score will
+                                    be used as the query Taxa ID.</p>
+                                    <p>Taxa IDs can be obtained from <a href=&quot;https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi&quot; target=&quot;_blank&quot;
+                            rel=&quot;noopener noreferrer&quot;>NCBI Taxonomy name/id</a>.</p>
+                            <p class=&quot;mb-0&quot;>Precomputed predictions of all human protein sequences identified by their UniProt accession and
+                        Ensemble transcriptome id can be found <a href=&quot;https://d9606.list-si.msl.ubc.ca/&quot;
+                            target=&quot;_blank&quot; rel=&quot;noopener noreferrer&quot;>here</a>.</p>"></a></small>
                         <div class="search-wrapper">
                             <textarea rows="6" class="form-control search-box" style="resize:vertical;" id="fasta" name="fasta" aria-describedby="fastaHelp" required=""></textarea>
                             <button class="close-icon fas fa-times-circle text-danger" type="reset"></button>
                         </div>
-                    </div><div class="form-group align-self-end col-lg-4 col-12">
-                    <small id="fastaHelp" class="form-text text-muted">Optional OX=n can be included in the FASTA header to explicitly identify the sequence Taxa ID as n. Otherwise, the Taxa ID of the sequence with the highest alignment (Bits) score will be used as the query Taxa ID. Taxa IDs can be obtained from <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi" target="_blank" rel="noopener noreferrer">NCBI Taxonomy name/id</a>.
-                        <br>
-                        Precomputed predictions of virtually all human protein sequences identified by their UniProt accession and Ensemble transcriptome id can be found <a href="https://d9606.list-si.msl.ubc.ca/" target="_blank" rel="noopener noreferrer">here</a>.
-                    </small>
-                </div></div>
+                    </div>
+                    <div class="form-group align-self-start col-lg-4 col-12" th:if="${!@applicationSettings.isDisableEmails()}">
+                        <label for="email" class="mb-0">Notification Email - Optional</label>
+                        <small id="emailHelp" class="form-text text-muted font-italic mt-0">Used to notify on job finish. Will not be saved.</small>
+                        <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+                    </div>
+                </div>
                 <div class="form-row">
-                    <div class="form-group form-submit-wrapper align-self-end order-3 offset-lg-1 col-lg-2 order-lg-1" style="text-align: center;">
+                    <div class="form-group form-submit-wrapper align-self-end" style="text-align: center;">
                         <button type="submit" class="btn btn-lg btn-primary mr-3">Submit</button>
 <!--                        <button type="reset" class="btn btn-lg btn-danger">-->
 <!--                            <i class="fas fa-trash mr-1"></i>Clear-->
 <!--                        </button>-->
-                    </div>
-                    <div class="form-group col-8 offset-lg-1 col-lg-4 order-lg-2" th:if="${!@applicationSettings.isDisableEmails()}">
-                        <label for="email">(Optional) Email Address</label>
-                        <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-                    </div>
-                    <div class="form-group align-self-end col-4 col-lg-4 order-lg-3" th:if="${!@applicationSettings.isDisableEmails()}">
-                        <small id="emailHelp" class="form-text text-muted">Only used to notify you when your job finishes. It won't be saved.</small>
                     </div>
                 </div>
             </form>

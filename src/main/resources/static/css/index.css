@@ -16,3 +16,7 @@
 .search-box:not(:valid) ~ .close-icon {
     display: none;
 }
+
+.popover {
+    max-width: 600px;
+}
