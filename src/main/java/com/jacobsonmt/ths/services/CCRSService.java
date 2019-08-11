@@ -66,18 +66,12 @@ public class CCRSService {
                 jobId
         );
 
-        // Add parsed version of result csv to aid in creation of front-end visualisations
         THSJob job = response.getBody();
 
         if ( job != null ) {
-
             // Obfuscate email
             job.setEmail( THSJob.obfuscateEmail( job.getEmail() ) );
 
-            // Create sequences
-            if ( job.getResult() != null ) {
-                job.migrateCSVResultToSequence();
-            }
         }
 
         return response;
@@ -181,12 +175,6 @@ public class CCRSService {
                 userId,
                 withResults
                 );
-
-        if ( withResults && response.getBody() != null ) {
-            for ( THSJob job : response.getBody() ) {
-                job.migrateCSVResultToSequence();
-            }
-        }
 
         return response;
 

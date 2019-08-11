@@ -7,12 +7,12 @@ import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(of = {"reference"})
 @ToString
 public class Base {
-    private final String reference;
-    private final int depth;
-    private final double conservation;
+    private String reference;
+    private int depth;
+    private double conservation;
     private List<Double> list = new ArrayList<>();
 }

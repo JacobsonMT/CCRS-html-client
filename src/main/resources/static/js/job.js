@@ -46,10 +46,10 @@ function connect() {
 function updateJobViewContent() {
     $.get(window.location.pathname + "/content", function(fragment) { // get from controller
         $("#job-view-content").replaceWith(fragment); // update snippet of page
-        $.get(window.location.pathname + "/sequence", function(sequence) { // get from controller
-            job.result = {sequence: sequence};
+        $.get(window.location.pathname + "/bases", function(bases) { // get from controller
+            job.result = {bases: bases};
             initializeGraphs();
-            if ( sequence.length > 0 ) {
+            if ( bases.length > 0 ) {
                 console.log('Disconnected.');
                 source.close();
             }
@@ -117,7 +117,7 @@ function initializeGraphs() {
     let espritzData = [];
 
     let conservation = [];
-    job.result.sequence.forEach(function (base, x) {
+    job.result.bases.forEach(function (base, x) {
         // if (x < 100) {
         categories.push(base.reference);
         depth.push(base.depth);
