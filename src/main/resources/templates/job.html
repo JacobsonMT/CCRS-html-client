@@ -78,7 +78,7 @@
                     <tr th:if="${job.complete && !job.failed}">
                         <td class="text-right" style="width: 33%">OX Taxa id:</td>
                         <td>
-                            <span class="align-middle p-4" th:text="${job.result != null ? job.result.taxaId : ''}"></span>
+                            <span class="align-middle p-4" th:text="${job.result != null ? job.result.taxa.id : ''}"></span>
                         </td>
                     </tr>
                     <tr>

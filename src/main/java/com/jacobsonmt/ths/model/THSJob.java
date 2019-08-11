@@ -6,14 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Log4j2
 @ApiModel( description = "Submitted job." )
@@ -73,33 +66,4 @@ public class THSJob  {
     public static String obfuscateEmail( String email ) {
         return email.replaceAll( "(\\w{0,3})(\\w+.*)(@.*)", "$1****$3" );
     }
-
-    public void migrateCSVResultToBases() {
-        if (this.result != null) {
-
-            try ( BufferedReader reader = new BufferedReader(new StringReader(this.result.getResultCSV()))) {
-                List<Base> bases = reader.lines()
-                        .skip( 2 ) // Skip OX taxa id and header
-                        .map( mapBase )
-                        .collect( Collectors.toList() );
-                this.result.setBases( bases );
-                this.result.setResultCSV( "" );
-            } catch ( IOException exc) {
-                // quit
-            }
-
-        }
-    }
-
-    private static Function<String, Base> mapBase = ( rawLine ) -> {
-        List<String> line = Arrays.asList( rawLine.split( "\t" ) );
-
-        Base base = new Base( line.get( 2 ), Integer.valueOf( line.get( 3 ) ), Double.valueOf( line.get( 4 ) ) );
-
-        if ( line.size() > 5 ) {
-            base.setList( line.stream().skip( 5 ).map( Double::parseDouble ).collect( Collectors.toList() ) );
-        }
-        return base;
-    };
-
 }
