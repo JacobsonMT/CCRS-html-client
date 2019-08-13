@@ -132,3 +132,25 @@ button.icon-only:focus, a.icon-only:focus {
     background-color: #dadada;
 }
 
+div.popover {
+    border: solid 2px #999;
+    background-color: #e9ecef;
+}
+
+div.popover div.arrow {
+    left: calc((.5rem + 1px) * -1);
+}
+
+div.popover div.arrow:before, div.popover div.arrow:after {
+    left: calc((.5rem + 1px) * -1);
+}
+
+div.popover div.arrow:after {
+    left:3px;
+    border-right-color: #e9ecef;
+}
+
+div.popover div.arrow:before {
+    left: 0;
+    border-right-color: #999;
+}
