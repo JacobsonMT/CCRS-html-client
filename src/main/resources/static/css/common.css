@@ -103,3 +103,32 @@ a[type=button].icon-only:hover  {
 button.icon-only:focus, a.icon-only:focus {
     outline: none;
 }
+
+.dropdown-menu {
+    white-space: nowrap;
+    border: solid 4px #999;
+    border-top: solid 1px #999;
+    padding: 0;
+}
+
+.dropdown-title {
+    display: block;
+    white-space: nowrap;
+    padding: .5rem 1.5rem;
+    background-color: #007bff;
+}
+
+.dropdown-divider {
+    border-top-color:#999;
+    margin: 0;
+}
+
+.dropdown-item:hover {
+    background-color: #dadada;
+}
+
+.dropdown-item:active {
+    color: inherit;
+    background-color: #dadada;
+}
+

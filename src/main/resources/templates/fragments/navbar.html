@@ -15,11 +15,18 @@
             <li class="nav-item">
                 <a class="nav-link" th:classappend="${activeTab == 'home'} ? 'active' : null" th:href="@{/}" href="/">Jobs</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link" th:classappend="${activeTab == 'documentation'} ? 'active' : null" th:href="@{/documentation}" href="/documentation">Documentation</a>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDataDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Data
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDataDropdown">
+                    <span class="dropdown-title">Precomputed predictions for all protein sequences</span>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="https://d9606.list-si.msl.ubc.ca/" target="_blank" rel="noopener noreferrer">Human</a>
+                </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link" th:classappend="${activeTab == 'contact'} ? 'active' : null" th:href="@{/contact}" href="/contact">Contact</a>
+                <a class="nav-link" th:classappend="${activeTab == 'documentation'} ? 'active' : null" th:href="@{/documentation}" href="/documentation">Documentation</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto collapse-center">
