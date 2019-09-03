@@ -154,3 +154,16 @@ div.popover div.arrow:before {
     left: 0;
     border-right-color: #999;
 }
+
+@media (max-width: 1250px) {
+    div.navbar-collapse.collapse ul.navbar-nav:first-child {
+        max-width:350px;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 992px) {
+    div.navbar-collapse.collapse ul.navbar-nav:first-child {
+        max-width: none;
+    }
+}
