@@ -19,10 +19,10 @@
                 <a class="nav-link" th:classappend="${activeTab == 'documentation'} ? 'active' : null" th:href="@{/documentation}" href="/documentation">Documentation</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://list-s2-api.msl.ubc.ca" target="_blank" rel="noopener noreferrer">API</a>
+                <a class="nav-link" th:href="${@siteSettings.apiSite}" href="https://list-s2-api.msl.ubc.ca" target="_blank" rel="noopener noreferrer">API</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="https://precomputed.list-s2.msl.ubc.ca" target="_blank" rel="noopener noreferrer">Precomputed Data</a>
+                <a class="nav-link" th:href="${@siteSettings.precomputedSite}" href="https://precomputed.list-s2.msl.ubc.ca" target="_blank" rel="noopener noreferrer">Precomputed Data</a>
             </li>
         </ul>
         <ul class="navbar-nav ml-auto collapse-center">
