@@ -70,6 +70,10 @@ div.container {
     overflow-x: hidden;
 }
 
+.nav-link.active {
+    text-decoration: underline;
+}
+
 @media (min-width: 992px) {
     .navbar-brand.abs
     {
