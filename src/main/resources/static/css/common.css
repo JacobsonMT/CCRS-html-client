@@ -155,6 +155,10 @@ div.popover div.arrow:before {
     border-right-color: #999;
 }
 
+.nav-link.active {
+    text-decoration: underline;
+}
+
 @media (max-width: 1250px) {
     div.navbar-collapse.collapse ul.navbar-nav:first-child {
         max-width:350px;
