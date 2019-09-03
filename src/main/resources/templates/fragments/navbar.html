@@ -13,6 +13,9 @@
     <div class="navbar-collapse collapse" id="collapsingNavbar">
         <ul class="navbar-nav collapse-right"style="font-size:150%;font-weight: bold;">
             <li class="nav-item">
+                <a class="nav-link" th:classappend="${activeTab == 'api'} ? 'active' : null" th:href="@{/}" href="/">API</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" th:href="${@siteSettings.htmlSite}" href="https://list-s2.msl.ubc.ca" target="_blank" rel="noopener noreferrer">Web Interface</a>
             </li>
             <li class="nav-item">
