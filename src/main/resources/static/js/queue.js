@@ -14,36 +14,48 @@ $(document).ready(function () {
         ]
     });
 
-    connect();
+    pollUntilDone(30000, 0);
 
 });
+
+// create a promise that resolves after a short delay
+function delay(t) {
+    return new Promise(function(resolve) {
+        setTimeout(resolve, t);
+    });
+}
+
+function pollUntilDone(interval, timeout) {
+    let start = Date.now();
+    let previousPending = -1;
+    function run() {
+        return $.get("/pending").then(function(pending) {
+            if (pending < previousPending) {
+                updateJobTable();
+                previousPending = pending;
+                return delay(interval).then(run);
+            } else if ( pending <= 0 ) {
+                // done
+                return pending;
+            } else {
+                if (timeout !== 0 && Date.now() - start > timeout) {
+                    throw new Error("timeout error on pollUntilDone");
+                } else {
+                    // run again with a short delay
+                    previousPending = pending;
+                    return delay(interval).then(run);
+                }
+            }
+        });
+    }
+    return run();
+}
 
 function deleteJob(e, jobId) {
     var ajaxCall = new XMLHttpRequest();
     ajaxCall.open('GET', "job/"+ jobId + "/delete");
     ajaxCall.send();
     queueTable.row( $(e.target).parents('tr') ).remove().draw();
-}
-
-function connect() {
-        var source = new EventSource('/register');
-        // Handle correct opening of connection
-        source.addEventListener('open', function (e) {
-            console.log('Connected.');
-        });
-
-        // Update the state when ever a message is sent
-        source.addEventListener('message', function (e) {
-            updateJobTable();
-        }, false);
-        // Reconnect if the connection fails
-        source.addEventListener('error', function (e) {
-            console.log('Disconnected.');
-            if (e.readyState == EventSource.CLOSED) {
-                connected = false;
-                connect();
-            }
-        }, false);
 }
 
 function updateJobTable() {
