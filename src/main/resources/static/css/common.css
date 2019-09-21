@@ -2,20 +2,12 @@ html {
     position: relative;
     min-height: 100%;
     font-size: 15px;
+    overflow-y: auto !important;
 }
 
 body {
     /* Margin bottom by footer height */
     margin-bottom: 55px;
-}
-
-nav.navbar {
-    -webkit-box-shadow: 0 4px 0px 0px #999;
-    -moz-box-shadow: 0 4px 0px 0px #999;
-    box-shadow: 0 4px 0px 0px #999;
-    color: #333333;
-    font-family: 'Open Sans', sans-serif;
-    letter-spacing: 1px;
 }
 
 .footer {
@@ -70,8 +62,16 @@ div.container {
     overflow-x: hidden;
 }
 
-.nav-link.active {
-    text-decoration: underline;
+/* Navbar */
+
+nav.navbar {
+    -webkit-box-shadow: 0 4px 0px 0px #999;
+    -moz-box-shadow: 0 4px 0px 0px #999;
+    box-shadow: 0 4px 0px 0px #999;
+    color: #333333;
+    font-family: 'Open Sans', sans-serif;
+    letter-spacing: 1px;
+    background-color: #7E9571 !important;
 }
 
 @media (min-width: 992px) {
@@ -84,14 +84,70 @@ div.container {
 }
 
 @media (max-width: 991px) {
-
     div.navbar-collapse ul.navbar-nav.collapse-right {
         text-align:right;
     }
-
     div.navbar-collapse ul.navbar-nav.collapse-center {
         text-align:center;
     }
+}
 
+.dropdown-menu {
+    white-space: nowrap;
+    border: solid 4px #999;
+    border-top: solid 1px #999;
+    padding: 0;
+}
 
+.dropdown-title {
+    display: block;
+    white-space: nowrap;
+    padding: .5rem 1.5rem;
+    background-color: #007bff;
+}
+
+.dropdown-divider {
+    border-top-color:#999;
+    margin: 0;
+}
+
+.dropdown-item:hover {
+    background-color: #dadada;
+}
+
+.dropdown-item:active, .dropdown-item.active {
+    color: inherit;
+    background-color: #dadada;
+}
+
+.nav-link.active {
+    text-decoration: underline;
+}
+
+@media (max-width: 1250px) {
+    div.navbar-collapse.collapse ul.navbar-nav:first-child {
+        max-width:350px;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 992px) {
+    div.navbar-collapse.collapse ul.navbar-nav:first-child {
+        max-width: none;
+    }
+}
+
+@media (min-width: 991px) {
+    ul.navbar-nav.divided > li.nav-item:not(:last-child) > a.nav-link {
+        border-right: 2px solid #999;
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+ul.navbar-nav.align-items-center {
+    -ms-flex-align: center!important;
+    align-items: center!important;
+    display: flex;
+    justify-content: center;
 }

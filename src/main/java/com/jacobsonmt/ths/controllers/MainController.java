@@ -13,6 +13,16 @@ public class MainController {
         return "contact";
     }
 
+    @GetMapping("/about")
+    public String about() {
+        return "about";
+    }
+
+    @GetMapping("/documentation")
+    public String documentation() {
+        return "documentation";
+    }
+
     @GetMapping("/")
     public String test() {
         return "docs/swagger-ui.html";
