@@ -61,6 +61,12 @@ function initJobTable() {
         "order": [],
         "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
         "stateSave": true,
+        "stateSaveCallback": function(settings,data) {
+            localStorage.setItem( 'DataTable', JSON.stringify(data) )
+        },
+        "stateLoadCallback": function(settings) {
+            return JSON.parse( localStorage.getItem( 'DataTable' ) )
+        },
         "stateSaveParams": function (settings, data) {
             data.order = "";
         },
