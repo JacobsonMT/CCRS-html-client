@@ -53,7 +53,7 @@ $(document).ready(function () {
     if (job.complete && !job.failed) {
         initializeGraphs();
     } else {
-        pollUntilDone(30000, 0).then(function(bases) {
+        pollUntilDone(5000, 0).then(function(bases) {
             job.result = {bases: bases};
             $.get(window.location.pathname + "/content", function(fragment) {
                 $("#job-view-content").replaceWith(fragment); // update snippet of page

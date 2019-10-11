@@ -1,20 +1,7 @@
 $(document).ready(function () {
-    queueTable = $('.job-table').DataTable({
-        "paging": true,
-        "searching": false,
-        "info": false,
-        "order": [],
-        "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
-        "stateSave": true,
-        "stateSaveParams": function (settings, data) {
-            data.order = "";
-        },
-        "columnDefs": [
-            { "orderable": false, "targets": [0, -1] }
-        ]
-    });
+    queueTable = initJobTable();
 
-    pollUntilDone(30000, 0);
+    pollUntilDone(5000, 0);
 
 });
 
@@ -61,20 +48,24 @@ function deleteJob(e, jobId) {
 function updateJobTable() {
     $.get("job-table", function(fragment) { // get from controller
         $("#job-table").replaceWith(fragment); // update snippet of page
-        queueTable = $('.job-table').DataTable({
-            "paging": true,
-            "searching": false,
-            "info": false,
-            "order": [],
-            "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
-            "stateSave": true,
-            "stateSaveParams": function (settings, data) {
-                data.order = "";
-            },
-            "columnDefs": [
-                { "orderable": false, "targets": [0, -1] }
-            ]
-        });
+        queueTable = initJobTable();
     });
 
+}
+
+function initJobTable() {
+    return $('.job-table').DataTable({
+        "paging": true,
+        "searching": false,
+        "info": false,
+        "order": [],
+        "lengthMenu": [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ],
+        "stateSave": true,
+        "stateSaveParams": function (settings, data) {
+            data.order = "";
+        },
+        "columnDefs": [
+            { "orderable": false, "targets": [0, -1] }
+        ]
+    });
 }
