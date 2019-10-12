@@ -17,48 +17,6 @@
 //     }
 // }
 
-function connect() {
-
-    if (job.complete) {
-        return;
-    }
-
-    window.source = new EventSource('/register');
-    // Handle correct opening of connection
-    source.addEventListener('open', function (e) {
-        console.log('Connected.');
-    });
-
-    // Update the state when ever a message is sent
-    source.addEventListener('message', function (e) {
-        updateJobViewContent();
-    }, false);
-    // Reconnect if the connection fails
-    source.addEventListener('error', function (e) {
-        console.log('Disconnected.');
-        if (e.readyState == EventSource.CLOSED) {
-            connected = false;
-            connect();
-        }
-    }, false);
-}
-
-function updateJobViewContent() {
-    $.get(window.location.pathname + "/content", function(fragment) { // get from controller
-        $("#job-view-content").replaceWith(fragment); // update snippet of page
-        $.get(window.location.pathname + "/bases", function(bases) { // get from controller
-            job.result = {bases: bases};
-            initializeGraphs();
-            if ( bases.length > 0 ) {
-                console.log('Disconnected.');
-                source.close();
-            }
-        });
-
-    });
-
-}
-
 /**
  * Custom Axis extension to allow emulation of negative values on a logarithmic
  * Y axis. Note that the scale is not mathematically correct, as a true
@@ -92,14 +50,48 @@ function updateJobViewContent() {
 
 
 $(document).ready(function () {
-
-    connect();
-
     if (job.complete && !job.failed) {
         initializeGraphs();
+    } else {
+        pollUntilDone(5000, 0).then(function(bases) {
+            job.result = {bases: bases};
+            $.get(window.location.pathname + "/content", function(fragment) {
+                $("#job-view-content").replaceWith(fragment); // update snippet of page
+                initializeGraphs();
+            });
+        }).catch(function(err) {
+            console.error(err);
+        });
     }
 
 });
+
+// create a promise that resolves after a short delay
+function delay(t) {
+    return new Promise(function(resolve) {
+        setTimeout(resolve, t);
+    });
+}
+
+function pollUntilDone(interval, timeout) {
+    let start = Date.now();
+    function run() {
+        return $.get(window.location.pathname + "/bases").then(function(bases) {
+            if ( bases.length > 0 ) {
+                // done
+                return bases;
+            } else {
+                if (timeout !== 0 && Date.now() - start > timeout) {
+                    throw new Error("timeout error on pollUntilDone");
+                } else {
+                    // run again with a short delay
+                    return delay(interval).then(run);
+                }
+            }
+        });
+    }
+    return run();
+}
 
 function initializeGraphs() {
 
