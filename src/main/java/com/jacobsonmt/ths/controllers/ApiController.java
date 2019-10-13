@@ -5,7 +5,10 @@ import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.services.CCRSService;
 import com.jacobsonmt.ths.settings.SiteSettings;
 import io.swagger.annotations.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import javax.ws.rs.core.UriBuilder;
 import java.util.List;
 import java.util.UUID;
@@ -40,7 +41,6 @@ public class ApiController {
         @ApiModelProperty( notes = "Input FASTA to be processed",
                 required = true,
                 example = ">P07766 OX=9606\nMQSGTHWRVLGLCLLSVGVWGQDGNEEMGGITQTPYKVSISGTTVILTCPQYPGSEILWQHNDKNI" )
-        @NotBlank( message = "FASTA content missing!" )
         private String fasta;
         @ApiModelProperty( notes = "Unique identifier for you the user. If not supplied one will be created and returned inside a 'WWW-Authenticate' header.",
                 required = true,
@@ -98,7 +98,7 @@ public class ApiController {
     @RequestMapping( value = "/submit", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE} )
     public ResponseEntity<APIJobSubmissionResult> submitJob(
             @ApiParam( value = "All details about the job submission", required = true )
-            @Valid @RequestBody SubmissionContent submissionContent
+            @RequestBody SubmissionContent submissionContent
     ) {
 
         String userId = submissionContent.getUserId();
@@ -164,8 +164,10 @@ public class ApiController {
     @RequestMapping( value = "/job/{jobId}", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE} )
     public ResponseEntity<THSJob> job(
             @ApiParam( value = "ID of job to retrieve", required = true )
-            @PathVariable( "jobId" ) String jobId ) {
-        return ccrsService.getJob( jobId );
+            @PathVariable( "jobId" ) String jobId,
+            @ApiParam( value = "True if returned job should include results", defaultValue = "true")
+            @RequestParam( value = "withResults", required = false, defaultValue = "true" ) boolean withResults ) {
+        return ccrsService.getJob( jobId, withResults );
     }
 
     @ApiOperation( value = "Retrieve result bases scores for a specific job ID" )
@@ -201,7 +203,7 @@ public class ApiController {
     @ResponseStatus( value = HttpStatus.ACCEPTED )
     @ApiResponses( value = {
             @ApiResponse( code = 202, message = "Job is deleted, if possible"),
-            @ApiResponse( code = 401, message = "You are not authorized to view the resource" ),
+            @ApiResponse( code = 401, message = "You are not authorized to use this resource" ),
             @ApiResponse( code = 404, message = "No job exists with specified ID" )
     } )
     @RequestMapping( value = "/job/{jobId}/delete", method = RequestMethod.DELETE )
@@ -209,6 +211,20 @@ public class ApiController {
             @ApiParam( value = "ID of job to delete", required = true )
             @PathVariable( "jobId" ) String jobId ) {
         return ccrsService.deleteJob( jobId );
+    }
+
+    @ApiOperation( value = "Delete all jobs for a specific user ID" )
+    @ResponseStatus( value = HttpStatus.ACCEPTED )
+    @ApiResponses( value = {
+            @ApiResponse( code = 202, message = "Jobs are deleted, if possible"),
+            @ApiResponse( code = 401, message = "You are not authorized to use this resource" ),
+            @ApiResponse( code = 404, message = "No job exists with specified ID" )
+    } )
+    @RequestMapping( value = "/user/{userId}/jobs/delete", method = RequestMethod.DELETE )
+    public ResponseEntity<String> deleteJobs(
+            @ApiParam( value = "ID of user for which to delete all jobs", required = true )
+            @PathVariable( "userId" ) String userId ) {
+        return ccrsService.deleteJobs( userId );
     }
 
     @ApiOperation( value = "Retrieve raw result CSV for a specific job ID" )

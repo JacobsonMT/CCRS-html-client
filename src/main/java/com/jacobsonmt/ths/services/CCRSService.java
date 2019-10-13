@@ -52,19 +52,24 @@ public class CCRSService {
     }
 
     public ResponseEntity<THSJob> getJob(String jobId) {
+        return getJob( jobId, true );
+    }
+
+    public ResponseEntity<THSJob> getJob(String jobId, boolean withResults) {
         RestTemplate restTemplate = new RestTemplateBuilder()
                 .errorHandler( new NoOpResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
-        log.info( "Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
+        log.info( "Get Job - Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
         ResponseEntity<THSJob> response
                 = restTemplate.exchange(
-                        applicationSettings.getProcessServerURI() + "/job/{jobId}",
+                        applicationSettings.getProcessServerURI() + "/job/{jobId}?withResults={withResults}",
                 HttpMethod.GET,
                 entity,
                 THSJob.class,
-                jobId
+                jobId,
+                withResults
         );
 
         // Add parsed version of result csv to aid in creation of front-end visualisations
@@ -114,19 +119,37 @@ public class CCRSService {
 
     }
 
-    public ResponseEntity<String> deleteJob( String jobId) {
+    public ResponseEntity<String> deleteJob( String jobId ) {
         RestTemplate restTemplate = new RestTemplateBuilder()
                 .errorHandler( new NoOpResponseErrorHandler() )
                 .build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
-        log.info( "Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
+        log.info( "Delete Job - Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
         return restTemplate.exchange( applicationSettings.getProcessServerURI() + "/job/{jobId}/delete",
                 HttpMethod.DELETE,
                 entity,
                 String.class,
                 jobId
+        );
+    }
+
+    public ResponseEntity<String> deleteJobs( String userId ) {
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new NoOpResponseErrorHandler() )
+                .build();
+        HttpEntity entity = new HttpEntity(createHeaders());
+        // getForObject cannot specify headers so we use exchange
+
+        log.info( "Delete Jobs - Client: (" + applicationSettings.getClientId() + "), User: (" + userId + ")" );
+        return restTemplate.exchange( applicationSettings.getProcessServerURI() +
+                        "/queue/client/{clientId}/user/{userId}/jobs/delete",
+                HttpMethod.DELETE,
+                entity,
+                String.class,
+                applicationSettings.getClientId(),
+                userId
         );
     }
 
