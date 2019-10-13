@@ -64,6 +64,9 @@ public class THSJob  {
     private long executionTime;
 
     public static String obfuscateEmail( String email ) {
+        if ( email == null ) {
+            return null;
+        }
         return email.replaceAll( "(\\w{0,3})(\\w+.*)(@.*)", "$1****$3" );
     }
 }
