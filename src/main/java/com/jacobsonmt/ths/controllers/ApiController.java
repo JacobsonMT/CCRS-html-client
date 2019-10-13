@@ -1,6 +1,5 @@
 package com.jacobsonmt.ths.controllers;
 
-import com.jacobsonmt.ths.model.Base;
 import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.services.CCRSService;
 import com.jacobsonmt.ths.settings.SiteSettings;
@@ -21,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Log4j2
-@Api( value = "Jobs API" )
+@Api(value = "Jobs API", description = "REST API for Job Submissions", tags = { "Jobs" })
 @RequestMapping( "/api" )
 @RestController
 public class ApiController {
@@ -36,7 +35,7 @@ public class ApiController {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    @ApiModel( description = "All details about the job submission." )
+    @ApiModel( value="Submission", description = "All details about the job submission." )
     private static final class SubmissionContent {
         @ApiModelProperty( notes = "Input FASTA to be processed",
                 required = true,
@@ -55,7 +54,7 @@ public class ApiController {
     @Getter
     @Setter
     @NoArgsConstructor
-    @ApiModel( description = "All details about the job(s) submission." )
+    @ApiModel( value="SubmissionResponse", description = "All details about the job(s) submission." )
     private static final class APIJobSubmissionResult extends CCRSService.JobSubmissionResponse {
 
         public APIJobSubmissionResult( CCRSService.JobSubmissionResponse jsr, String batchId, String fasta, String email){
@@ -95,7 +94,7 @@ public class ApiController {
             @ApiResponse( code = 403, message = "Accessing the resource you were trying to reach is forbidden" ),
             @ApiResponse( code = 404, message = "The resource you were trying to reach is not found" )
     } )
-    @RequestMapping( value = "/submit", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE} )
+    @RequestMapping( value = "/job", method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE} )
     public ResponseEntity<APIJobSubmissionResult> submitJob(
             @ApiParam( value = "All details about the job submission", required = true )
             @RequestBody SubmissionContent submissionContent
@@ -170,35 +169,6 @@ public class ApiController {
         return ccrsService.getJob( jobId, withResults );
     }
 
-    @ApiOperation( value = "Retrieve result bases scores for a specific job ID" )
-    @ResponseStatus( value = HttpStatus.OK )
-    @ApiResponses( value = {
-            @ApiResponse( code = 200, message = "Successfully retrieved bases scores for job" ),
-            @ApiResponse( code = 102, message = "Job is not yet complete, try again later" ),
-            @ApiResponse( code = 401, message = "You are not authorized to view the resource" ),
-            @ApiResponse( code = 404, message = "No job exists with specified ID or job has failed" )
-    } )
-    @RequestMapping( value = "/job/{jobId}/bases", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE} )
-    public ResponseEntity<List<Base>> getJobResultBases(
-            @ApiParam( value = "ID of job for which to retrieve result bases scores", required = true )
-            @PathVariable( "jobId" ) String jobId ) {
-        THSJob job = ccrsService.getJob( jobId ).getBody();
-
-        if ( job == null ) {
-            return ResponseEntity.notFound().build();
-        }
-
-        if ( !job.isComplete() ) {
-            return ResponseEntity.status( HttpStatus.PROCESSING ).build();
-        }
-
-        if ( job.isFailed() ) {
-            return ResponseEntity.status( HttpStatus.NOT_FOUND ).body( null );
-        }
-
-        return ResponseEntity.ok( job.getResult().getBases() );
-    }
-
     @ApiOperation( value = "Delete job for a specific job ID" )
     @ResponseStatus( value = HttpStatus.ACCEPTED )
     @ApiResponses( value = {
@@ -206,7 +176,7 @@ public class ApiController {
             @ApiResponse( code = 401, message = "You are not authorized to use this resource" ),
             @ApiResponse( code = 404, message = "No job exists with specified ID" )
     } )
-    @RequestMapping( value = "/job/{jobId}/delete", method = RequestMethod.DELETE )
+    @RequestMapping( value = "/job/{jobId}", method = RequestMethod.DELETE )
     public ResponseEntity<String> deleteJob(
             @ApiParam( value = "ID of job to delete", required = true )
             @PathVariable( "jobId" ) String jobId ) {
@@ -220,26 +190,11 @@ public class ApiController {
             @ApiResponse( code = 401, message = "You are not authorized to use this resource" ),
             @ApiResponse( code = 404, message = "No job exists with specified ID" )
     } )
-    @RequestMapping( value = "/batch/{batchId}/jobs/delete", method = RequestMethod.DELETE )
+    @RequestMapping( value = "/batch/{batchId}/jobs", method = RequestMethod.DELETE )
     public ResponseEntity<String> deleteJobs(
             @ApiParam( value = "Batch ID for which to delete all jobs", required = true )
             @PathVariable( "batchId" ) String batchId ) {
         return ccrsService.deleteJobs( batchId );
-    }
-
-    @ApiOperation( value = "Retrieve raw result CSV for a specific job ID" )
-    @ResponseStatus( value = HttpStatus.OK )
-    @ApiResponses( value = {
-            @ApiResponse( code = 200, message = "Successfully retrieved raw result CSV for job" ),
-            @ApiResponse( code = 102, message = "Job is not yet complete, try again later" ),
-            @ApiResponse( code = 401, message = "You are not authorized to view the resource" ),
-            @ApiResponse( code = 404, message = "No job exists with specified ID or job has failed" )
-    } )
-    @RequestMapping( value = "/job/{jobId}/resultCSV", method = RequestMethod.GET )
-    public ResponseEntity<String> jobResultCSV(
-            @ApiParam( value = "ID of job for which to retrieve raw result CSV", required = true )
-            @PathVariable( "jobId" ) String jobId ) {
-        return ResponseEntity.ok( ccrsService.downloadJobResultContent( jobId ).getBody() );
     }
 
 }

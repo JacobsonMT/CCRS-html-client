@@ -13,11 +13,9 @@ import sys
 
 
 BASE_URL = "https://list-s2-api.msl.ubc.ca/api"
-GET_JOB_ENDPOINT = BASE_URL + "/job/{job_id}"
-GET_JOBS_ENDPOINT = BASE_URL + "/batch/{batch_id}/jobs"
-SUBMIT_JOB_ENDPOINT = BASE_URL + '/submit'
-DELETE_JOB_ENDPOINT = BASE_URL + "/job/{job_id}/delete"
-DELETE_JOBS_ENDPOINT = BASE_URL + "/batch/{batch_id}/jobs/delete"
+SUBMIT_JOB_ENDPOINT = BASE_URL + '/job'
+JOB_ENDPOINT = BASE_URL + "/job/{job_id}"
+BATCH_ENDPOINT = BASE_URL + "/batch/{batch_id}/jobs"
 
 
 def submit_jobs_directory(directory, email=""):
@@ -82,11 +80,11 @@ def get_batch_file(filename, with_results=True):
 
 
 def get_job(job_id, with_results=True):
-    return requests.get(GET_JOB_ENDPOINT.format(job_id=job_id), params={"withResults": with_results}).json()
+    return requests.get(JOB_ENDPOINT.format(job_id=job_id), params={"withResults": with_results}).json()
 
 
 def get_batch(batch_id, with_results=True):
-    return requests.get(GET_JOBS_ENDPOINT.format(batch_id=batch_id), params={"withResults": with_results}).json()
+    return requests.get(BATCH_ENDPOINT.format(batch_id=batch_id), params={"withResults": with_results}).json()
 
 
 def delete_batch_file(filename):
@@ -102,11 +100,11 @@ def delete_batch_file(filename):
 
 
 def delete_job(job_id):
-    return requests.delete(DELETE_JOB_ENDPOINT.format(job_id=job_id)).text
+    return requests.delete(JOB_ENDPOINT.format(job_id=job_id)).text
 
 
 def delete_batch(batch_id):
-    return requests.delete(DELETE_JOBS_ENDPOINT.format(batch_id=batch_id)).text
+    return requests.delete(BATCH_ENDPOINT.format(batch_id=batch_id)).text
 
 
 def get_batch_ids_from_batch_file(filename):

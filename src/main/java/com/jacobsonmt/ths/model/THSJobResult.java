@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-@ApiModel( description = "Results of completed job." )
+@ApiModel( value="Result", description = "Results of completed job." )
 @Getter
 @Setter
 @NoArgsConstructor

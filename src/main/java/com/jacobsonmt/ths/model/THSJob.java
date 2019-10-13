@@ -9,7 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import java.util.Date;
 
 @Log4j2
-@ApiModel( description = "Submitted job." )
+@ApiModel( value="Job", description = "Submitted job." )
 @Getter
 @Setter
 @NoArgsConstructor
