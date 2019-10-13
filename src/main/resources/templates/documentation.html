@@ -4,16 +4,97 @@
 <head>
     <title th:text="${@siteSettings.title + ' - Documentation'}">Documentation</title>
     <object th:include="fragments/head :: head" th:remove="tag"/>
+
+    <style>
+        pre {
+            background-color: #f7f7f9;
+            padding: 1rem;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="fragments/navbar :: navbar(documentation)">...</div>
 <div class="container-fluid p-4">
-
-    <div th:replace="fragments/title :: title(title='Instructions')" th:remove="tag">...</div>
-
+    <div th:replace="fragments/title :: title(title='Documentation')" th:remove="tag">...</div>
     <div class="main-content p-4">
+        <p>Use the RESTful API to programmatically submit, retrieve, and delete jobs from LIST-S2. This can be done
+            through calls to the endpoints or by using our Python API wrapper.</p>
 
+        <p>You can download the Python API wrapper here: <a th:href="@{/files/api.py}">api.py</a></p>
+        <p>Requires: <a href="https://www.python.org/downloads/" target="_blank" rel="noopener noreferrer">Python 3</a>, <a href="https://pypi.org/project/requests/" target="_blank" rel="noopener noreferrer">requests</a></p>
+    </div>
+    <div th:replace="fragments/title :: title(title='Python API Wrapper Manual')" th:remove="tag">...</div>
+    <div class="main-content p-4">
+        <h4>API</h4>
+<pre>
+<code>usage: api.py [-h] {submit,get,delete} ...
 
+Functional API for LIST-S2 RESTful web service
+
+optional arguments:
+-h, --help           show this help message and exit
+
+Commands:
+{submit,get,delete}  Choose an action to take
+submit             Submit job(s)
+get                Get job(s)
+delete             Delete job(s)</code>
+</pre>
+        <h4>API SUBMIT</h4>
+<pre>
+<code>usage: api.py submit [-h] [-e EMAIL] (-f FILE | -d DIRECTORY)
+
+Outputs a file &lt;batch_id&gt;.batch.txt containing job information. Use this file
+to retrieve job status/results by running 'api.py get -f &lt;batch_id&gt;.batch.txt'
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -e EMAIL, --email EMAIL
+                        Send updates to this email when job is
+                        submitted/started/completed (will not be saved)
+
+required arguments:
+  Choose one method to select FASTA sequences to submit
+
+  -f FILE, --file FILE  FASTA file(s) with labelled sequences
+  -d DIRECTORY, --directory DIRECTORY
+                        Directory containing FASTA files with labelled
+                        sequences</code>
+</pre>
+        <h4>API GET</h4>
+<pre>
+<code>usage: api.py get [-h] [-o [OUTFILE]] [-s] (-f FILE | -j JOB | -b BATCH)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o [OUTFILE], --outfile [OUTFILE]
+                        Write results to outfile instead of stdout, defaults
+                        to stdout
+  -s, --slim            Retrieve a slim version of the job(s) without results
+
+required arguments:
+  Choose one method to select jobs/batches to retrieve status/results
+
+  -f FILE, --file FILE  Retrieve status/results for job submission batch file
+  -j JOB, --job JOB     Job ID to retrieve
+  -b BATCH, --batch BATCH
+                        Batch ID to retrieve</code>
+</pre>
+        <h4>API DELETE</h4>
+<pre>
+<code>usage: api.py delete [-h] (-f FILE | -j JOB | -b BATCH)
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+required arguments:
+  Choose one method to select jobs/batches to delete
+
+  -f FILE, --file FILE  Job submission batch file for which to delete jobs
+  -j JOB, --job JOB     Job ID to delete
+  -b BATCH, --batch BATCH
+                        Batch ID to delete</code>
+</pre>
     </div>
 
 </div>

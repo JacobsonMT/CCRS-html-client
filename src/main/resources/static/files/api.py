@@ -11,7 +11,6 @@ import uuid
 import json
 import sys
 
-
 BASE_URL = "https://list-s2-api.msl.ubc.ca/api"
 SUBMIT_JOB_ENDPOINT = BASE_URL + '/job'
 JOB_ENDPOINT = BASE_URL + "/job/{job_id}"
