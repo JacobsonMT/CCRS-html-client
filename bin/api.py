@@ -14,10 +14,10 @@ import sys
 
 BASE_URL = "https://list-s2-api.msl.ubc.ca/api"
 GET_JOB_ENDPOINT = BASE_URL + "/job/{job_id}"
-GET_JOBS_ENDPOINT = BASE_URL + "/user/{batch_id}/jobs"
+GET_JOBS_ENDPOINT = BASE_URL + "/batch/{batch_id}/jobs"
 SUBMIT_JOB_ENDPOINT = BASE_URL + '/submit'
 DELETE_JOB_ENDPOINT = BASE_URL + "/job/{job_id}/delete"
-DELETE_JOBS_ENDPOINT = BASE_URL + "/user/{batch_id}/jobs/delete"
+DELETE_JOBS_ENDPOINT = BASE_URL + "/batch/{batch_id}/jobs/delete"
 
 
 def submit_jobs_directory(directory, email=""):
@@ -64,7 +64,7 @@ def submit_job(content, batch_id="", email=""):
     response = requests.post(SUBMIT_JOB_ENDPOINT, json={
         "email": email,
         "fasta": content,
-        "userId": batch_id
+        "batchId": batch_id
     })
     return response.json()
 
@@ -117,7 +117,7 @@ def get_batch_ids_from_batch_file(filename):
         print("Unknown file format, verify file contains batch information '<batch_id>.batch.txt'")
         return None
 
-    batch_ids = set([res['userId'] for res in results])
+    batch_ids = set([res['batchId'] for res in results])
     if len(batch_ids) > 1:
         print("Multiple batch ids found in batch file '{}'.")
 

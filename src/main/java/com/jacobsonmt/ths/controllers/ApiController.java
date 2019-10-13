@@ -42,10 +42,10 @@ public class ApiController {
                 required = true,
                 example = ">P07766 OX=9606\nMQSGTHWRVLGLCLLSVGVWGQDGNEEMGGITQTPYKVSISGTTVILTCPQYPGSEILWQHNDKNI" )
         private String fasta;
-        @ApiModelProperty( notes = "Unique identifier for you the user. If not supplied one will be created and returned inside a 'WWW-Authenticate' header.",
+        @ApiModelProperty( notes = "Unique identifier for a batch of jobs. If not supplied one will be created and returned inside a 'WWW-Authenticate' header.",
                 required = true,
                 example = "59268BF313712A137594345B72A56E40" )
-        private String userId = "";
+        private String batchId = "";
         @ApiModelProperty( notes = "If supplied an email will be sent to notify you of status changes",
                 example = "email@example.com" )
         private String email = "";
@@ -58,23 +58,23 @@ public class ApiController {
     @ApiModel( description = "All details about the job(s) submission." )
     private static final class APIJobSubmissionResult extends CCRSService.JobSubmissionResponse {
 
-        public APIJobSubmissionResult( CCRSService.JobSubmissionResponse jsr, String userId, String fasta, String email){
+        public APIJobSubmissionResult( CCRSService.JobSubmissionResponse jsr, String batchId, String fasta, String email){
             super(jsr.getMessages(), jsr.getAcceptedJobs(), jsr.getRejectedJobHeaders(), jsr.getTotalRequestedJobs());
-            this.userId = userId;
+            this.batchId = batchId;
             this.fasta = fasta;
             this.email = email;
         }
 
-        public APIJobSubmissionResult( String userId, String fasta, String email){
+        public APIJobSubmissionResult( String batchId, String fasta, String email){
             super();
-            this.userId = userId;
+            this.batchId = batchId;
             this.fasta = fasta;
             this.email = email;
         }
 
-        @ApiModelProperty( notes = "Unique identifier for you the user. This should be included in all submissions.",
+        @ApiModelProperty( notes = "Unique identifier for a batch of jobs. This should be included in all submissions.",
                 example = "59268BF313712A137594345B72A56E40" )
-        private String userId;
+        private String batchId;
         @ApiModelProperty( notes = "Supplied input FASTA",
                 example = ">P07766 OX=9606\nMQSGTHWRVLGLCLLSVGVWGQDGNEEMGGITQTPYKVSISGTTVILTCPQYPGSEILWQHNDKNI" )
         private String fasta;
@@ -91,7 +91,7 @@ public class ApiController {
     @ApiResponses( value = {
             @ApiResponse( code = 202, message = "Successfully submitted job" ),
             @ApiResponse( code = 400, message = "Malformed content, usually an unrecoverable validation error with the input FASTA" ),
-            @ApiResponse( code = 401, message = "userId not supplied. Please create a unique userId or use the userId located in the supplied 'WWW-Authenticate' header" ),
+            @ApiResponse( code = 401, message = "batchId not supplied. Please create a unique batchId or use the batchId located in the supplied 'WWW-Authenticate' header" ),
             @ApiResponse( code = 403, message = "Accessing the resource you were trying to reach is forbidden" ),
             @ApiResponse( code = 404, message = "The resource you were trying to reach is not found" )
     } )
@@ -101,15 +101,15 @@ public class ApiController {
             @RequestBody SubmissionContent submissionContent
     ) {
 
-        String userId = submissionContent.getUserId();
+        String batchId = submissionContent.getBatchId();
 
-        if ( userId == null || userId.isEmpty() ) {
+        if ( batchId == null || batchId.isEmpty() ) {
             return ResponseEntity.status( HttpStatus.UNAUTHORIZED )
-                    .header( "WWW-Authenticate", "userId=" + UUID.randomUUID().toString() )
+                    .header( "WWW-Authenticate", "batchId=" + UUID.randomUUID().toString() )
                     .body( null );
         }
 
-        ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( userId,
+        ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( batchId,
                 "",
                 submissionContent.getFasta(),
                 submissionContent.getEmail(),
@@ -120,11 +120,11 @@ public class ApiController {
                     .status( jobSubmissionResponse.getStatusCodeValue() )
                     .location( UriBuilder
                             .fromPath( siteSettings.getFullUrl() )
-                            .path( "api/user/{userId}/jobs" ).build( userId )
+                            .path( "api/batch/{batchId}/jobs" ).build( batchId )
                     )
                     .body( new APIJobSubmissionResult(
                             jobSubmissionResponse.getBody(),
-                            userId,
+                            batchId,
                             submissionContent.getFasta(),
                             submissionContent.getEmail()
                     ) );
@@ -132,26 +132,26 @@ public class ApiController {
             return ResponseEntity
                     .status( HttpStatus.INTERNAL_SERVER_ERROR )
                     .body( new APIJobSubmissionResult(
-                            userId,
+                            batchId,
                             submissionContent.getFasta(),
                             submissionContent.getEmail()
                     ) );
         }
     }
 
-    @ApiOperation( value = "Retrieve all jobs for a specific user" )
+    @ApiOperation( value = "Retrieve all jobs for a specific batch" )
     @ResponseStatus( value = HttpStatus.OK )
     @ApiResponses( value = {
             @ApiResponse( code = 200, message = "Successfully retrieved jobs" ),
             @ApiResponse( code = 401, message = "You are not authorized to view the resource" )
     } )
-    @RequestMapping( value = "/user/{userId}/jobs", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE} )
-    public ResponseEntity<List<THSJob>> jobsForUser(
-            @ApiParam( value = "ID of user for which to retrieve jobs", required = true )
-            @PathVariable( "userId" ) String userId,
+    @RequestMapping( value = "/batch/{batchId}/jobs", method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE} )
+    public ResponseEntity<List<THSJob>> jobsForBatch(
+            @ApiParam( value = "Batch ID for which to retrieve jobs", required = true )
+            @PathVariable( "batchId" ) String batchId,
             @ApiParam( value = "True if returned jobs should include results", defaultValue = "false")
             @RequestParam( value = "withResults", required = false, defaultValue = "false" ) boolean withResults ) {
-        return ccrsService.getJobsForUser( userId, withResults );
+        return ccrsService.getJobsForUser( batchId, withResults );
     }
 
     @ApiOperation( value = "Retrieve job for a specific job ID" )
@@ -213,18 +213,18 @@ public class ApiController {
         return ccrsService.deleteJob( jobId );
     }
 
-    @ApiOperation( value = "Delete all jobs for a specific user ID" )
+    @ApiOperation( value = "Delete all jobs for a specific batch ID" )
     @ResponseStatus( value = HttpStatus.ACCEPTED )
     @ApiResponses( value = {
             @ApiResponse( code = 202, message = "Jobs are deleted, if possible"),
             @ApiResponse( code = 401, message = "You are not authorized to use this resource" ),
             @ApiResponse( code = 404, message = "No job exists with specified ID" )
     } )
-    @RequestMapping( value = "/user/{userId}/jobs/delete", method = RequestMethod.DELETE )
+    @RequestMapping( value = "/batch/{batchId}/jobs/delete", method = RequestMethod.DELETE )
     public ResponseEntity<String> deleteJobs(
-            @ApiParam( value = "ID of user for which to delete all jobs", required = true )
-            @PathVariable( "userId" ) String userId ) {
-        return ccrsService.deleteJobs( userId );
+            @ApiParam( value = "Batch ID for which to delete all jobs", required = true )
+            @PathVariable( "batchId" ) String batchId ) {
+        return ccrsService.deleteJobs( batchId );
     }
 
     @ApiOperation( value = "Retrieve raw result CSV for a specific job ID" )
