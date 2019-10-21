@@ -136,23 +136,18 @@ if __name__ == "__main__":
         if os.path.isdir(path):
             return path
         else:
-            raise argparse.ArgumentTypeError(f"readable_dir:{path} is not a valid path")
+            raise argparse.ArgumentTypeError("readable_dir:{path} is not a valid path".format(path=path))
 
 
     def file_path(path):
         if os.path.isfile(path):
             return path
         else:
-            raise argparse.ArgumentTypeError(f"readable_file:{path} is not a valid file")
+            raise argparse.ArgumentTypeError("readable_file:{path} is not a valid file".format(path=path))
 
 
     parser = HelpParser(description="Functional API for LIST-S2 RESTful web service")
-
-    subparsers = parser.add_subparsers(
-        title="Commands",
-        help='Choose an action to take'
-    )
-
+    subparsers = parser.add_subparsers(title="Commands", help='Choose an action to take')
     submit_parser = subparsers.add_parser('submit', help='Submit job(s)',
                                           description="Outputs a file <batch_id>.batch.txt containing job "
                                                       "information. Use this file to retrieve job status/results by "
@@ -201,11 +196,30 @@ if __name__ == "__main__":
             return
 
         if len(res) > 0:
-            print(res, file=p_args.outfile)
-
             complete = len([r for r in res if r['complete']])
             failed = len([r for r in res if r['failed']])
             pending = len(res) - complete
+            if args.type == 'tab':
+                for r in res:
+                    if r['complete'] and not r['failed']:
+                        print('{label}\tOX = {taxaId}\tJobId: {jobId}\tSubmitted: {submittedDate}\tStarted: {'
+                              'startedDate}\tExecutionTime: {executionTime}s '
+                              .format(**r, taxaId=r['result']['taxa']['id']), file=p_args.outfile)
+
+                        if r['result']['bases']:
+                            print("Pos\tRef\tDepth\tConservation\tA\tR\tN\tD\tC\tQ\tE\tG\tH\tI\tL\tK\tM\tF\tP\tS\tT"
+                                  "\tW\tY\tV",
+                                  file=p_args.outfile)
+
+                            for pos, b in enumerate(r['result']['bases']):
+                                print("{0:5.0f}\t{1:s}\t{2:6.0f}\t{3:1.6f}\t"
+                                      .format(pos+1, b['reference'], b['depth'], b['conservation'])
+                                      + "\t".join(["{0:1.6f}".format(s) for s in b['list']]), file=p_args.outfile)
+
+                        print("", file=p_args.outfile)
+            else:
+                print(json.dumps(res, indent=4), file=p_args.outfile)
+
             print("Complete: {}, Failed: {}, Pending: {}".format(complete, failed, pending))
         else:
             print('No jobs found.')
@@ -217,6 +231,8 @@ if __name__ == "__main__":
                             type=argparse.FileType('w'), default=sys.stdout)
     get_parser.add_argument('-s', '--slim', action='store_false',
                             help='Retrieve a slim version of the job(s) without results')
+    get_parser.add_argument('-t', '--type', choices=['tab', 'json'], default='tab',
+                            help='Data type to return, either tabular or json. Default: tab')
 
     group = get_parser.add_argument_group(title='required arguments',
                                           description='Choose one method to select jobs/batches to retrieve '
