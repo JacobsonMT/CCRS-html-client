@@ -184,7 +184,7 @@ if __name__ == "__main__":
 
     def parse_get(p_args):
         if p_args.job:
-            res = get_job(p_args.job, p_args.slim)
+            res = [get_job(p_args.job, p_args.slim)]
         elif p_args.batch:
             res = get_batch(p_args.batch, p_args.slim)
         elif p_args.file:
