@@ -19,6 +19,7 @@
             <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi" target="_blank"
                rel="noopener noreferrer">NCBI Taxonomy name/id</a></p>
         <p><b>Output:</b></p>
+        <p><a th:href="@{/job/example}" href="../job/example">Live Example</a></p>
         <ol type="I">
             <li> The potential deleteriousness effect of every possible amino acid mutation in the form of a heat-map
                 matrix.
@@ -32,7 +33,7 @@
                         position.
                     </li>
                     <li>20 columns one for each amino acid: The potential deleteriousness <span th:text="${@siteSettings.title}" th:remove="tag">LIST-S2</span> score for mutating the
-                        reference amino acid to “this” amino acid.
+                        reference amino acid to “this” amino acid. Scores are in the range [0 .. 1], where lower scores indicate more benign and higher indicate deleteriousness effect.
                     </li>
                 </ol>
         </ol>
