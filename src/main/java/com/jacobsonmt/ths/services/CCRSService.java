@@ -114,7 +114,7 @@ public class CCRSService {
 
     public ResponseEntity<String> deleteJob( String jobId) {
         RestTemplate restTemplate = new RestTemplateBuilder()
-                .errorHandler( new NoOpResponseErrorHandler() )
+                .errorHandler( new RestTemplateResponseErrorHandler() )
                 .build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
