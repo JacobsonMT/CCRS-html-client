@@ -18,10 +18,18 @@
         /*]]>*/
     </script>
     <script th:src="@{/js/job.js}"></script>
+    <style>
+        #cutoff-container {
+            position: absolute;
+            top: 50px;
+            left: 520px;
+            z-index: 99;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="fragments/navbar">...</div>
-<div class="container p-4">
+<div class="container-fluid p-4">
 
     <div id="job-view-content" class="main-content p-4" >
 
@@ -29,13 +37,18 @@
         <span class="d-block text-center mb-4 text-muted" th:text="${job.jobId}">...</span>
         <!--<small class="d-block text-center mb-4 text-muted" th:if="${job.hidden}" th:text="Private">...</small>-->
 
-        <div class="card mx-auto text-center mb-4 result-card" th:if="${job.complete}">
+        <div class="card mx-auto text-center mb-4 result-card" th:if="${job.complete}" style="min-width:750px;">
             <div class="card-header">
                 Results
             </div>
             <div class="card-body" th:if="${job.complete && !job.failed}">
                <div id="job-graphs">
-
+                   <div id="cutoff-container" style="display: none;">
+                       <div>
+                           <span for="cutoff">Binary Cutoff: </span><span id="cutoff-value">0.88</span>
+                       </div>
+                       <input type="range" min="0.01" max="0.99" value="0.88" step="0.01" name="cutoff" id="cutoff"/>
+                   </div>
                     <div id="heatmap-container">
 
                     </div>
@@ -78,7 +91,7 @@
                     <tr th:if="${job.complete && !job.failed}">
                         <td class="text-right" style="width: 33%">OX Taxa id:</td>
                         <td>
-                            <span class="align-middle p-4" th:text="${job.result != null ? job.result.taxaId : ''}"></span>
+                            <span class="align-middle p-4" th:text="${job.result != null ? job.result.taxa.id : ''}"></span>
                         </td>
                     </tr>
                     <tr>

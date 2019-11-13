@@ -17,48 +17,6 @@
 //     }
 // }
 
-function connect() {
-
-    if (job.complete) {
-        return;
-    }
-
-    window.source = new EventSource('/register');
-    // Handle correct opening of connection
-    source.addEventListener('open', function (e) {
-        console.log('Connected.');
-    });
-
-    // Update the state when ever a message is sent
-    source.addEventListener('message', function (e) {
-        updateJobViewContent();
-    }, false);
-    // Reconnect if the connection fails
-    source.addEventListener('error', function (e) {
-        console.log('Disconnected.');
-        if (e.readyState == EventSource.CLOSED) {
-            connected = false;
-            connect();
-        }
-    }, false);
-}
-
-function updateJobViewContent() {
-    $.get(window.location.pathname + "/content", function(fragment) { // get from controller
-        $("#job-view-content").replaceWith(fragment); // update snippet of page
-        $.get(window.location.pathname + "/sequence", function(sequence) { // get from controller
-            job.result = {sequence: sequence};
-            initializeGraphs();
-            if ( sequence.length > 0 ) {
-                console.log('Disconnected.');
-                source.close();
-            }
-        });
-
-    });
-
-}
-
 /**
  * Custom Axis extension to allow emulation of negative values on a logarithmic
  * Y axis. Note that the scale is not mathematically correct, as a true
@@ -92,22 +50,71 @@ function updateJobViewContent() {
 
 
 $(document).ready(function () {
-
-    connect();
-
     if (job.complete && !job.failed) {
         initializeGraphs();
+    } else {
+        pollUntilDone(5000, 0).then(function(bases) {
+            job.result = {bases: bases};
+            $.get(window.location.pathname + "/content", function(fragment) {
+                $("#job-view-content").replaceWith(fragment); // update snippet of page
+                initializeGraphs();
+            });
+        }).catch(function(err) {
+            console.error(err);
+        });
     }
-
 });
 
-function initializeGraphs() {
+// create a promise that resolves after a short delay
+function delay(t) {
+    return new Promise(function(resolve) {
+        setTimeout(resolve, t);
+    });
+}
 
+function pollUntilDone(interval, timeout) {
+    let start = Date.now();
+    function run() {
+        return $.get(window.location.pathname + "/bases").then(function(bases) {
+            if ( bases.length > 0 ) {
+                // done
+                return bases;
+            } else {
+                if (timeout !== 0 && Date.now() - start > timeout) {
+                    throw new Error("timeout error on pollUntilDone");
+                } else {
+                    // run again with a short delay
+                    return delay(interval).then(run);
+                }
+            }
+        });
+    }
+    return run();
+}
+
+function initializeGraphs() {
     $('#job-graphs').bind('mouseleave', function(e) {
         window.charts.forEach(function (chart) {
             chart.tooltip.hide();
             chart.xAxis[0].removePlotLine('plot-line-sync');
         });
+    });
+
+    $('#cutoff').bind('input', function () {
+        window.heatmapChart.heatmapCutoff = this.value;
+        $('#cutoff-value').html(parseFloat(this.value).toFixed(2));
+    });
+
+    $('#cutoff').bind('mouseup', function () {
+        if (window.heatmapChart.colorAxis[0].stops.length === 4) {
+            window.heatmapChart.colorAxis[0].update({
+                stops: [[0, '#a1dab4'],
+                    [window.heatmapChart.heatmapCutoff, '#a1dab4'],
+                    [window.heatmapChart.heatmapCutoff, '#253494'],
+                    [1, '#253494']],
+                tickPositions: [0, window.heatmapChart.heatmapCutoff, 1]
+            });
+        }
     });
 
     let data = [];
@@ -117,7 +124,7 @@ function initializeGraphs() {
     let espritzData = [];
 
     let conservation = [];
-    job.result.sequence.forEach(function (base, x) {
+    job.result.bases.forEach(function (base, x) {
         // if (x < 100) {
         categories.push(base.reference);
         depth.push(base.depth);
@@ -147,6 +154,7 @@ function initializeGraphs() {
             document.getElementById('heatmap-container'),
             createHeatMap( "Position Conservation Matrix", data, categories)
         );
+        window.heatmapChart.heatmapCutoff = 0.88;
         charts.push( window.heatmapChart );
     }
 
@@ -417,7 +425,70 @@ function createHeatMap(title,
             turboThreshold: 1000,
         }],
 
+        lang: {
+            axis_toggle: 'Toggle Color Axis: Gradient/Binary'
+        },
+
         exporting: {
+            buttons: {
+                scaleToggle: {
+                    theme: {
+                        fill: 'white',
+                        stroke: 'silver',
+                        r: 5,
+                        style: {
+                            fontSize: '10px'
+                        },
+                        states: {
+                            hover: {
+                                fill: '#41739D',
+                                style: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    },
+                    align: 'left',
+                    //verticalAlign:'middle',
+                    x: 400,
+                    y:-10,
+                    onclick: function () {
+                        // The toggling of the text is not using an official API, can break with version update!
+                        var axis = this.colorAxis[0];
+                        if (axis.stops.length !== 4) {
+                            this.exportSVGElements[3].element.nextSibling.innerHTML = "Binary";
+                            $("#cutoff-container").show();
+                            axis.update({
+                                    stops: [[0, '#a1dab4'],
+                                            [this.heatmapCutoff, '#a1dab4'],
+                                            [this.heatmapCutoff, '#253494'],
+                                            [1, '#253494']],
+                                tickPositions: [0, this.heatmapCutoff, 1]
+                            });
+                        } else {
+                            this.exportSVGElements[3].element.nextSibling.innerHTML = "Grad";
+                            $("#cutoff-container").hide();
+                            axis.update({
+                                stops: [[0, '#ffffff'],
+                                    [0.1, '#ffffcc'],
+                                    [0.6, '#a1dab4'],
+                                    [0.8, '#41b6c4'],
+                                    [0.9, '#2c7fb8'],
+                                    [0.95, '#253494']],
+                                tickPositions: [0, 1]
+                            });
+                        }
+
+                    },
+                    symbol: 'circle',
+                    symbolFill: '#bada55',
+                    symbolStroke: '#330033',
+                    symbolStrokeWidth: 1,
+                    symbolSize: 10,
+                    _titleKey: 'axis_toggle',
+                    text: 'Binary'
+                }
+            },
             filename: job.label,
             sourceWidth: 1200,
             sourceHeight: 500,

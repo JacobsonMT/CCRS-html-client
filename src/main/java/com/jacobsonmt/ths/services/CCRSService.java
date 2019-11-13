@@ -1,6 +1,6 @@
 package com.jacobsonmt.ths.services;
 
-import com.jacobsonmt.ths.model.Base;
+import com.jacobsonmt.ths.model.Message;
 import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.settings.ApplicationSettings;
 import com.jacobsonmt.ths.settings.SiteSettings;
@@ -16,13 +16,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpStatus.Series.CLIENT_ERROR;
+import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;
 
 @Log4j2
 @Service
@@ -48,44 +50,82 @@ public class CCRSService {
         return restTemplate.postForEntity( applicationSettings.getProcessServerURI() + "/job/submit", request, JobSubmissionResponse.class );
     }
 
-    public THSJob getJob(String jobId) {
-        RestTemplate restTemplate = new RestTemplate();
+    public ResponseEntity<THSJob> getJob(String jobId) {
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new NoOpResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
-        // TODO: this might be vulnerable to attack, either validate jobId or do some sort of escaping
         log.info( "Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
         ResponseEntity<THSJob> response
-                = restTemplate.exchange(applicationSettings.getProcessServerURI() + "/job/" + jobId, HttpMethod.GET, entity, THSJob.class);
+                = restTemplate.exchange(
+                        applicationSettings.getProcessServerURI() + "/job/{jobId}",
+                HttpMethod.GET,
+                entity,
+                THSJob.class,
+                jobId
+        );
 
-        // Add parsed version of result csv to aid in creation of front-end visualisations
         THSJob job = response.getBody();
 
-        if (job != null && job.getResult() != null) {
-            List<Base> sequence = Arrays.stream( job.getResult().getResultCSV().split( "\\r?\\n" ) )
-                    .skip( 2 ) // Skip OX taxa id and header
-                    .map( mapBase )
-                    .collect( Collectors.toList() );
-            job.getResult().setSequence( sequence );
+        if ( job != null ) {
+            // Obfuscate email
+            job.setEmail( THSJob.obfuscateEmail( job.getEmail() ) );
 
         }
 
-        return response.getBody();
+        return response;
 
     }
 
-    public String deleteJob(String jobId) {
-        RestTemplate restTemplate = new RestTemplate();
+    public ResponseEntity<String> downloadJobResultContent(String jobId) {
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
-        // TODO: this might be vulnerable to attack, either validate jobId or do some sort of escaping
+        log.info( "Download Result Content for Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
+
+        return restTemplate.exchange( applicationSettings.getProcessServerURI() + "/job/{jobId}/resultCSV",
+                HttpMethod.GET,
+                entity,
+                String.class,
+                jobId
+        );
+
+    }
+
+    public ResponseEntity<String> downloadJobInputFASTA(String jobId) {
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
+        HttpEntity entity = new HttpEntity(createHeaders());
+        // getForObject cannot specify headers so we use exchange
+
+        log.info( "Download Input FASTA for Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
+
+        return restTemplate.exchange( applicationSettings.getProcessServerURI() + "/job/{jobId}/inputFASTA",
+                HttpMethod.GET,
+                entity,
+                String.class,
+                jobId
+        );
+
+    }
+
+    public ResponseEntity<String> deleteJob( String jobId) {
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() )
+                .build();
+        HttpEntity entity = new HttpEntity(createHeaders());
+        // getForObject cannot specify headers so we use exchange
+
         log.info( "Client: (" + applicationSettings.getClientId() + "), Job: (" + jobId + ")" );
-        ResponseEntity<String> response
-                = restTemplate.exchange(applicationSettings.getProcessServerURI() + "/job/" + jobId + "/delete", HttpMethod.GET, entity, String.class);
-
-        return response.getBody();
-
+        return restTemplate.exchange( applicationSettings.getProcessServerURI() + "/job/{jobId}/delete",
+                HttpMethod.DELETE,
+                entity,
+                String.class,
+                jobId
+        );
     }
 
     public synchronized boolean hasChanged() {
@@ -95,8 +135,12 @@ public class CCRSService {
 
         try {
             ResponseEntity<Integer> response
-                    = restTemplate.exchange( applicationSettings.getProcessServerURI() + "/queue/client/" + applicationSettings.getClientId() + "/complete",
-                    HttpMethod.GET, entity, Integer.class );
+                    = restTemplate.exchange( applicationSettings.getProcessServerURI() + "/queue/client/{clientId}/complete",
+                    HttpMethod.GET,
+                    entity,
+                    Integer.class,
+                    applicationSettings.getClientId()
+            );
 
             Integer newCompletionCount = response.getBody();
 
@@ -111,18 +155,28 @@ public class CCRSService {
         return false;
     }
 
-    public List<THSJob> getJobsForUser(String userId) {
-        RestTemplate restTemplate = new RestTemplate();
+    public ResponseEntity<List<THSJob>> getJobsForUser( String userId ) {
+        return getJobsForUser( userId, false );
+    }
+
+    public ResponseEntity<List<THSJob>> getJobsForUser( String userId, boolean withResults ) {
+        RestTemplate restTemplate = new RestTemplateBuilder()
+                .errorHandler( new RestTemplateResponseErrorHandler() ).build();
         HttpEntity entity = new HttpEntity(createHeaders());
         // getForObject cannot specify headers so we use exchange
 
-        // TODO: this might be vulnerable to attack, either validate jobId or do some sort of escaping
-        log.info( "Client: (" + applicationSettings.getClientId() + "), User: (" + userId + ")" );
-        ResponseEntity<List<THSJob>> response
-                = restTemplate.exchange(applicationSettings.getProcessServerURI() + "/queue/client/" + applicationSettings.getClientId() + "/user/" + userId,
-                HttpMethod.GET, entity, new ParameterizedTypeReference<List<THSJob>>(){});
+        log.info( "Get Jobs for Client: (" + applicationSettings.getClientId() + "), User: (" + userId + ")" );
+        ResponseEntity<List<THSJob>> response = restTemplate.exchange(
+                applicationSettings.getProcessServerURI() + "/queue/client/{clientId}/user/{userId}?withResults={withResults}",
+                HttpMethod.GET,
+                entity,
+                new ParameterizedTypeReference<List<THSJob>>(){},
+                applicationSettings.getClientId(),
+                userId,
+                withResults
+                );
 
-        return response.getBody();
+        return response;
 
     }
 
@@ -132,18 +186,6 @@ public class CCRSService {
         headers.set( "auth_token", applicationSettings.getClientToken() );
         return headers;
     }
-
-    private static Function<String, Base> mapBase = ( rawLine ) -> {
-        List<String> line = Arrays.asList( rawLine.split( "\t" ) );
-
-        Base base = new Base( line.get( 2 ), Integer.valueOf( line.get( 3 ) ), Double.valueOf( line.get( 4 ) ) );
-
-        if ( line.size() > 5 ) {
-            base.setList( line.stream().skip( 5 ).map( Double::parseDouble ).collect( Collectors.toList() ) );
-        }
-        return base;
-    };
-
 
     @ToString
     @Getter
@@ -163,13 +205,14 @@ public class CCRSService {
     }
 
     @ToString
-    @Getter
     @Setter
-    @AllArgsConstructor
+    @Getter
     @NoArgsConstructor
     public static class JobSubmissionResponse {
-        private String message;
-        private List<String> jobIds;
+        private List<Message> messages;
+        private List<THSJob> acceptedJobs;
+        private List<String> rejectedJobHeaders;
+        private int totalRequestedJobs;
     }
 
     private static class NoOpResponseErrorHandler extends
@@ -179,5 +222,24 @@ public class CCRSService {
         public void handleError( ClientHttpResponse response) throws IOException {
         }
 
+    }
+
+    public static class RestTemplateResponseErrorHandler
+            implements ResponseErrorHandler {
+
+        @Override
+        public boolean hasError(ClientHttpResponse httpResponse)
+                throws IOException {
+
+            return (
+                    httpResponse.getStatusCode().series() == CLIENT_ERROR
+                            || httpResponse.getStatusCode().series() == SERVER_ERROR);
+        }
+
+        @Override
+        public void handleError(ClientHttpResponse httpResponse)
+                throws IOException {
+            throw new ResponseStatusException( httpResponse.getStatusCode(), "", null );
+        }
     }
 }

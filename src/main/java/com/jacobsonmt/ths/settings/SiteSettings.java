@@ -19,6 +19,9 @@ public class SiteSettings {
     private String host;
     private String context;
 
+    private String apiSite;
+    private String precomputedSite;
+
     @Email
     private String contactEmail;
     @Email

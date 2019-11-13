@@ -1,10 +1,12 @@
 package com.jacobsonmt.ths.controllers;
 
 import com.jacobsonmt.ths.model.ContactForm;
+import com.jacobsonmt.ths.model.THSJob;
 import com.jacobsonmt.ths.services.CCRSService;
 import com.jacobsonmt.ths.services.EmailService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.MailSendException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @Log4j2
 @Controller
@@ -31,14 +34,14 @@ public class MainController {
     @GetMapping("/")
     public String index( Model model) {
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ).getBody());
         return "index";
     }
 
     @GetMapping("/job-table")
     public String getJobTable( Model model) {
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ).getBody());
 
         return "index :: #job-table";
     }
@@ -46,14 +49,29 @@ public class MainController {
     @GetMapping("/queue")
     public String queue( Model model) {
         String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ));
+        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ).getBody());
 
         return "queue";
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<Long> pendingCount() {
+        String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
+        List<THSJob> jobs = ccrsService.getJobsForUser( userId ).getBody();
+        if (jobs == null) {
+            return ResponseEntity.status( 500 ).body( 0L );
+        }
+        return ResponseEntity.ok().body(jobs.stream().filter( j -> j.getResult() == null ).count());
     }
 
     @GetMapping("/documentation")
     public String documentation( Model model) {
         return "documentation";
+    }
+
+    @GetMapping("/about")
+    public String about() {
+        return "about";
     }
 
     @GetMapping("/contact")

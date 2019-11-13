@@ -6,24 +6,8 @@
     <object th:include="fragments/head :: head" th:remove="tag"/>
 </head>
 <body>
-<div th:replace="fragments/navbar">...</div>
-<div class="container p-4">
-
-
-    <div th:replace="fragments/title :: title(title='About')" th:remove="tag">...</div>
-
-    <div class="main-content p-4">
-        <p><b>LIST-SI</b> (species independent) predicts the deleteriousness of amino acid mutations in protein sequences. First, it
-            aligns (high Local identity Pair-wise Sequence Alignment, LPSA) the query sequence to all protein sequences in the UniProt Swiss-Prot/TrEMBL
-            database and then it identifies the most relevant homologies based on their local identity to the query
-            sequence around that position. And finally, it estimates the potential deleteriousness
-            of mutations based on Taxonomy distance of species with variations to the query.</p>
-
-        <p> Prediction scores are in the range [0 .. 1], where lower scores indicate more benign and higher indicate
-            deleteriousness effect. We also included <a href="https://d9606.list-si.msl.ubc.ca/" target="_blank" rel="noopener noreferrer">precomputed predictions</a>
-            of virtually all human protein sequences identified by their UniProt accession and Ensemble transcriptome id.</p>
-
-    </div>
+<div th:replace="fragments/navbar :: navbar(documentation)">...</div>
+<div class="container-fluid p-4">
 
     <div th:replace="fragments/title :: title(title='Instructions')" th:remove="tag">...</div>
 
@@ -35,6 +19,7 @@
             <a href="https://www.ncbi.nlm.nih.gov/Taxonomy/TaxIdentifier/tax_identifier.cgi" target="_blank"
                rel="noopener noreferrer">NCBI Taxonomy name/id</a></p>
         <p><b>Output:</b></p>
+        <p><a th:href="@{/job/example}" href="../job/example">Live Example</a></p>
         <ol type="I">
             <li> The potential deleteriousness effect of every possible amino acid mutation in the form of a heat-map
                 matrix.
@@ -44,25 +29,15 @@
                     <li>AC: Sequence id from the fasta header.</li>
                     <li>Pos: Amino acid position.</li>
                     <li>Ref: The reference amino acid.</li>
-                    <li>Conservation: The average LIST-SI deleteriousness score of all possible mutations at that
+                    <li>Conservation: The average <span th:text="${@siteSettings.title}" th:remove="tag">LIST-S2</span> deleteriousness score of all possible mutations at that
                         position.
                     </li>
-                    <li>20 columns one for each amino acid: The potential deleteriousness LIST-SI score for mutating the
-                        reference amino acid to “this” amino acid.
+                    <li>20 columns one for each amino acid: The potential deleteriousness <span th:text="${@siteSettings.title}" th:remove="tag">LIST-S2</span> score for mutating the
+                        reference amino acid to “this” amino acid. Scores are in the range [0 .. 1], where lower scores indicate more benign and higher indicate deleteriousness effect.
                     </li>
                 </ol>
         </ol>
 
-
-
-    </div>
-
-    <div th:replace="fragments/title :: title(title='Terms & Conditions')" th:remove="tag">...</div>
-
-    <div class="main-content p-4" >
-        <p>This software is distributed on an as is basis, without any kind of warranties. This software is free for
-            academic not for profit research only. Appropriate citation when using LIST-SI in publication of scientific
-            results. </p>
     </div>
 
 </div>

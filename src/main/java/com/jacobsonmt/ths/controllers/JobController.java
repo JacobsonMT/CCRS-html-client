@@ -7,8 +7,7 @@ import com.jacobsonmt.ths.services.CCRSService;
 import com.jacobsonmt.ths.utils.InputStreamUtils;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -58,21 +57,10 @@ public class JobController {
                 email,
                 true );
 
-        if ( jobSubmissionResponse.getStatusCodeValue() == 202 && jobSubmissionResponse.getBody() != null) {
-            List<String> jobIds = jobSubmissionResponse.getBody().getJobIds();
-            StringBuilder message;
-            if ( jobIds.size() > 1 ) {
-                message = new StringBuilder( "Multiple Jobs Submitted" );
-            } else {
-                message = new StringBuilder( "Job Submitted" );
-            }
-            redirectAttributes.addFlashAttribute( "submitMessage", message.toString() );
-            if (!jobSubmissionResponse.getBody().getMessage().isEmpty()) {
-                redirectAttributes.addFlashAttribute( "warnMessage", jobSubmissionResponse.getBody().getMessage() );
-            }
+        if (jobSubmissionResponse.getBody() != null) {
+            redirectAttributes.addFlashAttribute( "messages", jobSubmissionResponse.getBody().getMessages() );
         } else {
-            redirectAttributes.addFlashAttribute( "errorMessage",
-                    jobSubmissionResponse.getBody() != null ? jobSubmissionResponse.getBody().getMessage() : "Server Error" );
+            redirectAttributes.addFlashAttribute( "errorMessage", "Server Error" );
         }
 
         return "redirect:/";
@@ -82,28 +70,13 @@ public class JobController {
     public String job( @PathVariable("jobId") String jobId,
                        Model model) throws IOException {
 
-        THSJob job = ccrsService.getJob( jobId );
+        ResponseEntity<THSJob> entity = ccrsService.getJob( jobId );
 
-        if (job==null) {
+        if (entity.getStatusCode().equals( HttpStatus.NOT_FOUND ) || entity.getBody() == null ) {
             throw new JobNotFoundException();
         }
 
-        model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
-
-        return "job";
-    }
-
-    @GetMapping("/job2/{jobId}")
-    public String job2( @PathVariable("jobId") String jobId,
-                       Model model) throws IOException {
-
-        THSJob job = ccrsService.getJob( jobId );
-
-        if (job==null) {
-            throw new JobNotFoundException();
-        }
-
-        model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
+        model.addAttribute("job", entity.getBody() );
 
         return "job";
     }
@@ -111,28 +84,30 @@ public class JobController {
     @GetMapping("/job/{jobId}/content")
     public String getJobViewContent( @PathVariable("jobId") String jobId,
                                      Model model) {
-        THSJob job = ccrsService.getJob( jobId );
+        ResponseEntity<THSJob> entity = ccrsService.getJob( jobId );
 
-        if (job==null) {
+        if (entity.getStatusCode().equals( HttpStatus.NOT_FOUND ) || entity.getBody() == null ) {
             throw new JobNotFoundException();
         }
 
-        model.addAttribute("job", job.obfuscate() ); // TODO: might have obfuscated already in CCRS
+        model.addAttribute("job", entity.getBody() );
 
         return "job :: #job-view-content";
     }
 
-    @GetMapping(value = "/job/{jobId}/sequence", produces = "application/json")
+    @GetMapping(value = "/job/{jobId}/bases", produces = "application/json")
     @ResponseBody
-    public List<Base> getJobResultSequence( @PathVariable("jobId") String jobId) {
-        THSJob job = ccrsService.getJob( jobId );
+    public List<Base> getJobResultBases( @PathVariable("jobId") String jobId) {
+        ResponseEntity<THSJob> entity = ccrsService.getJob( jobId );
 
-        if (job==null) {
+        if (entity.getStatusCode().equals( HttpStatus.NOT_FOUND ) || entity.getBody() == null ) {
             throw new JobNotFoundException();
         }
 
+        THSJob job = entity.getBody();
+
         if ( job.isComplete() && !job.isFailed() ) {
-            return job.getResult().getSequence();
+            return job.getResult().getBases();
         }
 
         return new ArrayList<>();
@@ -140,42 +115,17 @@ public class JobController {
 
     @GetMapping("/job/{jobId}/delete")
     public ResponseEntity<String> deleteJob( @PathVariable("jobId") String jobId ) {
-
-        String result = ccrsService.deleteJob( jobId );
-
-        if (result==null) {
-            throw new JobNotFoundException();
-        }
-
-        return ResponseEntity.ok( "Job Deleted" );
+        return ccrsService.deleteJob( jobId );
     }
 
     @GetMapping("/job/{jobId}/resultCSV")
     public ResponseEntity<String> jobResultCSV( @PathVariable("jobId") String jobId) {
-        THSJob job = ccrsService.getJob( jobId );
-
-        // test for not null and complete
-        if ( job != null && job.isComplete() && !job.isFailed() ) {
-            return ResponseEntity.ok()
-                    .contentType( MediaType.parseMediaType("application/octet-stream"))
-                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + ".list\"")
-                    .body(job.getResult().getResultCSV());
-        }
-        return ResponseEntity.badRequest().body( "" );
+        return ccrsService.downloadJobResultContent( jobId );
     }
 
     @GetMapping("/job/{jobId}/inputFASTA")
     public ResponseEntity<String> jobInputFASTA( @PathVariable("jobId") String jobId) {
-        THSJob job = ccrsService.getJob( jobId );
-
-        // test for not null and complete
-        if ( job != null ) {
-            return ResponseEntity.ok()
-                    .contentType( MediaType.parseMediaType("application/octet-stream"))
-                    .header( HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + job.getLabel() + ".fasta\"")
-                    .body(job.getInputFASTAContent());
-        }
-        return ResponseEntity.badRequest().body( "" );
+        return ccrsService.downloadJobInputFASTA( jobId );
     }
 
 
