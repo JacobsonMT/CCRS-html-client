@@ -18,6 +18,14 @@
         /*]]>*/
     </script>
     <script th:src="@{/js/job.js}"></script>
+    <style>
+        #cutoff-container {
+            position: absolute;
+            top: 50px;
+            left: 520px;
+            z-index: 99;
+        }
+    </style>
 </head>
 <body>
 <div th:replace="fragments/navbar">...</div>
@@ -29,13 +37,18 @@
         <span class="d-block text-center mb-4 text-muted" th:text="${job.jobId}">...</span>
         <!--<small class="d-block text-center mb-4 text-muted" th:if="${job.hidden}" th:text="Private">...</small>-->
 
-        <div class="card mx-auto text-center mb-4 result-card" th:if="${job.complete}">
+        <div class="card mx-auto text-center mb-4 result-card" th:if="${job.complete}" style="min-width:750px;">
             <div class="card-header">
                 Results
             </div>
             <div class="card-body" th:if="${job.complete && !job.failed}">
                <div id="job-graphs">
-
+                   <div id="cutoff-container" style="display: none;">
+                       <div>
+                           <span for="cutoff">Binary Cutoff: </span><span id="cutoff-value">0.88</span>
+                       </div>
+                       <input type="range" min="0.01" max="0.99" value="0.88" step="0.01" name="cutoff" id="cutoff"/>
+                   </div>
                     <div id="heatmap-container">
 
                     </div>
