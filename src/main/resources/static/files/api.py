@@ -69,7 +69,8 @@ def submit_job(content, batch_id="", email=""):
 def get_batch_file(filename, with_results=True):
     batch_ids = get_batch_ids_from_batch_file(filename)
     if batch_ids is None:
-        return None
+        print("Could not parse batch ids from file '{}'.".format(filename))
+        return []
 
     results = []
     for batch_id in batch_ids:
@@ -79,7 +80,10 @@ def get_batch_file(filename, with_results=True):
 
 
 def get_job(job_id, with_results=True):
-    return requests.get(JOB_ENDPOINT.format(job_id=job_id), params={"withResults": with_results}).json()
+    res = requests.get(JOB_ENDPOINT.format(job_id=job_id), params={"withResults": with_results})
+    if res.status_code == 404:
+        return []
+    return [res.json()]
 
 
 def get_batch(batch_id, with_results=True):
@@ -89,7 +93,7 @@ def get_batch(batch_id, with_results=True):
 def delete_batch_file(filename):
     batch_ids = get_batch_ids_from_batch_file(filename)
     if batch_ids is None:
-        return None
+        return "Could not parse batch ids from file '{}'.".format(filename)
 
     results = []
     for batch_id in batch_ids:
@@ -116,7 +120,7 @@ def get_batch_ids_from_batch_file(filename):
 
     batch_ids = set([res['batchId'] for res in results])
     if len(batch_ids) > 1:
-        print("Multiple batch ids found in batch file '{}'.")
+        print("Multiple batch ids found in batch file '{}'.".format(filename))
 
     return batch_ids
 
@@ -136,14 +140,14 @@ if __name__ == "__main__":
         if os.path.isdir(path):
             return path
         else:
-            raise argparse.ArgumentTypeError("readable_dir:{path} is not a valid path".format(path=path))
+            raise argparse.ArgumentTypeError("readable_dir: '{path}' is not a valid path".format(path=path))
 
 
     def file_path(path):
         if os.path.isfile(path):
             return path
         else:
-            raise argparse.ArgumentTypeError("readable_file:{path} is not a valid file".format(path=path))
+            raise argparse.ArgumentTypeError("readable_file: '{path}' is not a valid file".format(path=path))
 
 
     parser = HelpParser(description="Functional API for LIST-S2 RESTful web service")
@@ -184,15 +188,13 @@ if __name__ == "__main__":
 
     def parse_get(p_args):
         if p_args.job:
-            res = [get_job(p_args.job, p_args.slim)]
+            res = get_job(p_args.job, p_args.slim)
         elif p_args.batch:
             res = get_batch(p_args.batch, p_args.slim)
         elif p_args.file:
             res = get_batch_file(p_args.file, p_args.slim)
         else:
-            res = []
-
-        if res is None:
+            print("Error parsing arguments")
             return
 
         if len(res) > 0:
@@ -222,7 +224,7 @@ if __name__ == "__main__":
 
             print("Complete: {}, Failed: {}, Pending: {}".format(complete, failed, pending))
         else:
-            print('No jobs found.')
+            print('No jobs found')
 
 
     get_parser.set_defaults(func=parse_get)
