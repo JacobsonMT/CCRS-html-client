@@ -18,6 +18,12 @@ BATCH_ENDPOINT = BASE_URL + "/batch/{batch_id}/jobs"
 
 
 def submit_jobs_directory(directory, email=""):
+    """
+    Submit all *.fasta files in given directory as a single batch. Write batch file to active directory.
+    :param directory: Path of directory containing FASTA files
+    :param email: (Optional) send updates to this email when job is submitted/started/completed
+    :return: String containing information about the request
+    """
     batch_id = str(uuid.uuid4())
 
     results = []
@@ -40,6 +46,12 @@ def submit_jobs_directory(directory, email=""):
 
 
 def submit_jobs_file(filename, email=""):
+    """
+    Submit fasta file as a single batch. Write batch file to active directory.
+    :param filename: Path to FASTA file
+    :param email: (Optional) send updates to this email when job is submitted/started/completed
+    :return: String containing information about the request
+    """
     batch_id = str(uuid.uuid4())
 
     with open(filename) as f:
@@ -58,6 +70,13 @@ def submit_jobs_file(filename, email=""):
 
 
 def submit_job(content, batch_id="", email=""):
+    """
+    Send request to submit job
+    :param content: FASTA content of job
+    :param batch_id: Batch Id for this job
+    :param email: (Optional) send updates to this email when job is submitted/started/completed
+    :return: Response JSON
+    """
     response = requests.post(SUBMIT_JOB_ENDPOINT, json={
         "email": email,
         "fasta": content,
@@ -67,6 +86,12 @@ def submit_job(content, batch_id="", email=""):
 
 
 def get_batch_file(filename, with_results=True):
+    """
+    Get job results/status for all jobs in a batch file
+    :param filename: Path to batch file
+    :param with_results: True if completed results should be included in response, else False
+    :return: List of JSON objects with job results/status
+    """
     batch_ids = get_batch_ids_from_batch_file(filename)
     if batch_ids is None:
         print("Could not parse batch ids from file '{}'.".format(filename))
@@ -80,6 +105,12 @@ def get_batch_file(filename, with_results=True):
 
 
 def get_job(job_id, with_results=True):
+    """
+    Get job results/status for a single job with given id
+    :param job_id: Job Id
+    :param with_results: True if completed results should be included in response, else False
+    :return: List containing single JSON object with job results/status if job exists, else empty list
+    """
     res = requests.get(JOB_ENDPOINT.format(job_id=job_id), params={"withResults": with_results})
     if res.status_code == 404:
         return []
@@ -87,13 +118,25 @@ def get_job(job_id, with_results=True):
 
 
 def get_batch(batch_id, with_results=True):
+    """
+    Get job results/status for a single batch with given id
+    :param batch_id: Batch Id
+    :param with_results: True if completed results should be included in response, else False
+    :return: List of JSON objects with job results/status
+    """
     return requests.get(BATCH_ENDPOINT.format(batch_id=batch_id), params={"withResults": with_results}).json()
 
 
 def delete_batch_file(filename):
+    """
+    Request stop for all jobs in all batches in a batch file
+    :param filename: Path to batch file
+    :return: List of response strings one per batch
+    """
     batch_ids = get_batch_ids_from_batch_file(filename)
     if batch_ids is None:
-        return "Could not parse batch ids from file '{}'.".format(filename)
+        print("Could not parse batch ids from file '{}'.".format(filename))
+        return []
 
     results = []
     for batch_id in batch_ids:
@@ -103,14 +146,29 @@ def delete_batch_file(filename):
 
 
 def delete_job(job_id):
+    """
+    Request stop for a job with given job id
+    :param job_id: Job Id
+    :return: Response string
+    """
     return requests.delete(JOB_ENDPOINT.format(job_id=job_id)).text
 
 
 def delete_batch(batch_id):
+    """
+    Request stop for all jobs for a batch with given batch id
+    :param batch_id: Batch Id
+    :return: Response string
+    """
     return requests.delete(BATCH_ENDPOINT.format(batch_id=batch_id)).text
 
 
 def get_batch_ids_from_batch_file(filename):
+    """
+    Get all batch ids from a batch file
+    :param filename: Path to batch file
+    :return: List of batch ids or None if error loading information from batch file
+    """
     try:
         with open(filename) as f:
             results = json.load(f)
@@ -137,6 +195,9 @@ if __name__ == "__main__":
 
 
     def dir_path(path):
+        """
+        Argparse type for directories
+        """
         if os.path.isdir(path):
             return path
         else:
@@ -144,6 +205,9 @@ if __name__ == "__main__":
 
 
     def file_path(path):
+        """
+        Argparse type for files
+        """
         if os.path.isfile(path):
             return path
         else:
@@ -159,6 +223,9 @@ if __name__ == "__main__":
 
 
     def parse_submit(p_args):
+        """
+        Handle argparse submit subcommand
+        """
         if p_args.file:
             res = submit_jobs_file(p_args.file, p_args.email)
         elif p_args.directory:
@@ -187,6 +254,9 @@ if __name__ == "__main__":
 
 
     def parse_get(p_args):
+        """
+        Handle argparse get subcommand
+        """
         if p_args.job:
             res = get_job(p_args.job, p_args.slim)
         elif p_args.batch:
@@ -204,6 +274,7 @@ if __name__ == "__main__":
             if args.type == 'tab':
                 for r in res:
                     if r['complete'] and not r['failed']:
+                        # Print tab delimited result CSV for each successfully complete job
                         print('{label}\tOX = {taxaId}\tJobId: {jobId}\tSubmitted: {submittedDate}\tStarted: {'
                               'startedDate}\tExecutionTime: {executionTime}s '
                               .format(**r, taxaId=r['result']['taxa']['id']), file=p_args.outfile)
@@ -252,6 +323,9 @@ if __name__ == "__main__":
 
 
     def parse_delete(p_args):
+        """
+        Handle argparse delete subcommand
+        """
         if p_args.job:
             res = delete_job(p_args.job)
         elif p_args.batch:
@@ -259,9 +333,11 @@ if __name__ == "__main__":
         elif p_args.file:
             res = delete_batch_file(p_args.file)
         else:
-            res = ''
+            print("Error parsing arguments")
+            return
 
-        print(res)
+        if res:
+            print(res)
 
 
     delete_parser.set_defaults(func=parse_delete)
