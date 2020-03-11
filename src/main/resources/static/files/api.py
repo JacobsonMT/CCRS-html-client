@@ -279,9 +279,13 @@ if __name__ == "__main__":
                               'startedDate}\tExecutionTime: {executionTime}s '
                               .format(**r, taxaId=r['result']['taxa']['id']), file=p_args.outfile)
 
+                        if r['result']['alleleOrder']:
+                            allele_order = "\t".join(r['result']['alleleOrder'])
+                        else:
+                            allele_order = "A\tR\tN\tD\tC\tQ\tE\tG\tH\tI\tL\tK\tM\tF\tP\tS\tT\tW\tY\tV"
+
                         if r['result']['bases']:
-                            print("Pos\tRef\tDepth\tConservation\tA\tR\tN\tD\tC\tQ\tE\tG\tH\tI\tL\tK\tM\tF\tP\tS\tT"
-                                  "\tW\tY\tV",
+                            print("Pos\tRef\tDepth\tConservation\t" + allele_order,
                                   file=p_args.outfile)
 
                             for pos, b in enumerate(r['result']['bases']):
