@@ -7,7 +7,7 @@
     <tr>
         <th scope="col"></th>
         <th scope="col">Header</th>
-        <th scope="col">OX (Taxa ID)</th>
+        <th scope="col">OX (Species)</th>
         <th scope="col">Status</th>
         <th scope="col">Submitted</th>
         <th scope="col">Results</th>
@@ -22,7 +22,7 @@
                 </span>
             </td>
             <td><span class="align-middle" th:text="${job.label}" th:classappend="${(job.failed or (job.result != null && job.result.taxa.key != 'OX')) ? 'text-danger' : ''}"></span></td>
-            <td><span class="align-middle" th:text="${job.result != null ? job.result.taxa.id : ''}" th:classappend="${(job.failed or (job.result != null && job.result.taxa.key != 'OX')) ? 'text-danger' : ''}"></span></td>
+            <td><span class="align-middle" th:text="${job.result != null ? job.result.taxa.id + (job.result.taxa.name != '' ? ' (' + job.result.taxa.name + ')': '') : ''}" th:classappend="${(job.failed or (job.result != null && job.result.taxa.key != 'OX')) ? 'text-danger' : ''}"></span></td>
             <td><span class="align-middle" th:text="${job.status}" th:classappend="${(job.failed or (job.result != null && job.result.taxa.key != 'OX')) ? 'text-danger' : ''}"></span></td>
             <td><span class="align-middle" th:text="${job.submittedDate}" th:classappend="${(job.failed or (job.result != null && job.result.taxa.key != 'OX')) ? 'text-danger' : ''}"></span></td>
             <td>
