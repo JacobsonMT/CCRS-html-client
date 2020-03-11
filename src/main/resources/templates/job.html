@@ -123,6 +123,12 @@
                             <span class="align-middle p-4" th:text="${job.result != null ? job.result.taxa.id : ''}"></span>
                         </td>
                     </tr>
+                    <tr th:if="${job.complete && !job.failed}">
+                        <td class="text-right" style="width: 33%">Species:</td>
+                        <td>
+                            <span class="align-middle p-4" th:text="${job.result != null ? job.result.taxa.name : ''}"></span>
+                        </td>
+                    </tr>
                     <tr>
                         <td class="text-right" style="width: 33%">Submitted:</td>
                         <td>
