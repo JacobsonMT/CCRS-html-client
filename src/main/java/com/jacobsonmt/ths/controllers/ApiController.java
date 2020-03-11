@@ -85,7 +85,7 @@ public class ApiController {
 
     @ApiOperation( value = "Submit job to be processed",
             response = APIJobSubmissionResult.class,
-            notes = "Check on status of particular job using /job/{jobId} endpoint" )
+            notes = "Check on status of particular job using /job/{jobId} endpoint. Jobs are stored for at least 14 days." )
     @ResponseStatus( value = HttpStatus.ACCEPTED )
     @ApiResponses( value = {
             @ApiResponse( code = 202, message = "Successfully submitted job" ),
