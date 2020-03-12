@@ -31,7 +31,7 @@
 <body>
 <div th:replace="fragments/navbar :: navbar(home)">...</div>
 <div class="container-fluid p-4">
-
+    <a style="position: absolute;right: 25px;" class="text-muted" th:href="@{/(session=${sessionId})}"><i class="fas fa-bookmark mr-1 align-middle"></i>Bookmark</a>
     <div style="position: absolute; top: 100px; right: 25px;min-width: 200px;z-index: 1;opacity: 0.8;">
 
         <div th:each="message: ${messages}" class="toast fade hide"

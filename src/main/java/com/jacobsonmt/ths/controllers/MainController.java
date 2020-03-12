@@ -13,10 +13,13 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.mail.MessagingException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -32,9 +35,15 @@ public class MainController {
 
 
     @GetMapping("/")
-    public String index( Model model) {
-        String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
-        model.addAttribute("jobs", ccrsService.getJobsForUser( userId ).getBody());
+    public String index( Model model, HttpServletResponse response, @RequestParam(value = "session", required = false) String session ) {
+        if (session == null) {
+            session = RequestContextHolder.currentRequestAttributes().getSessionId();
+        } else {
+            Cookie cookie = new Cookie("JSESSIONID", session);
+            response.addCookie( cookie );
+        }
+        model.addAttribute("jobs", ccrsService.getJobsForUser( session ).getBody());
+        model.addAttribute("sessionId", session);
         return "index";
     }
 
