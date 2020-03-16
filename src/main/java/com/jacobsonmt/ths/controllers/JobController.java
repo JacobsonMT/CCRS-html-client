@@ -32,6 +32,7 @@ public class JobController {
                                    @RequestParam(value = "fastaFile", required = false) MultipartFile fastaFile,
 //                                   @RequestParam(value = "label", required = false, defaultValue = "") String label,
                                    @RequestParam(value = "email", required = false, defaultValue = "") String email,
+                                   @RequestParam(value = "session", required = false) String session,
 //                                   HttpServletRequest request,
                                    RedirectAttributes redirectAttributes) throws IOException {
 
@@ -39,19 +40,20 @@ public class JobController {
 //        if ( ipAddress == null ) {
 //            ipAddress = request.getRemoteAddr();
 //        }
-
-        String userId = RequestContextHolder.currentRequestAttributes().getSessionId();
+        if (session == null || session.isEmpty()) {
+            session = RequestContextHolder.currentRequestAttributes().getSessionId();
+        }
 
         if ( fasta.isEmpty() ) {
             if (fastaFile != null) {
                 fasta = InputStreamUtils.inputStreamToString( fastaFile.getInputStream() );
             } else {
                 redirectAttributes.addFlashAttribute( "errorMessage", "FASTA Not Found" );
-                return "redirect:/";
+                return "redirect:/?session="+session;
             }
         }
 
-        ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( userId,
+        ResponseEntity<CCRSService.JobSubmissionResponse> jobSubmissionResponse = ccrsService.submitJob( session,
                 "",
                 fasta,
                 email,
@@ -63,7 +65,7 @@ public class JobController {
             redirectAttributes.addFlashAttribute( "errorMessage", "Server Error" );
         }
 
-        return "redirect:/";
+        return "redirect:/?session="+session;
     }
 
     @GetMapping("/job/{jobId}")
